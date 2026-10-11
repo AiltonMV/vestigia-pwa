@@ -1,4 +1,4 @@
-import { auth } from '@/lib/firebase';
+import { auth } from '../config/firebase';
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = await auth.currentUser?.getIdToken();
