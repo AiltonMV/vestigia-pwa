@@ -1,0 +1,42 @@
+.text {
+  margin: 0;
+}
+
+.word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(0.25em);
+  transition:
+    opacity 0.5s ease,
+    filter 0.6s ease,
+    transform 0.6s ease;
+}
+
+.visible .word {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+.highlight {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    filter: none;
+    transform: none;
+    transition: opacity 0.3s ease;
+  }
+}

@@ -1,0 +1,43 @@
+.notes {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.topLeft {
+  position: absolute;
+  left: clamp(1.25rem, 5vw, 4rem);
+  top: 16%;
+}
+
+.topRight {
+  position: absolute;
+  right: clamp(4rem, 14vw, 12rem);
+  top: 17%;
+}
+
+.squiggle {
+  width: 9rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.coordinates {
+  margin: 0;
+  padding-left: 0.6rem;
+  border-left: 1px solid currentColor;
+  border-radius: 40% 0 0 40%;
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .notes {
+    display: none;
+  }
+}

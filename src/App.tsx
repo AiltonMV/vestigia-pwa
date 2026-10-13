@@ -1,9 +1,7 @@
+import { LandingPage } from '@/views/pages/LandingPage';
+
 function App() {
-  return (
-    <main>
-      <h1>Integradora</h1>
-    </main>
-  );
+  return <LandingPage />;
 }
 
 export default App;
