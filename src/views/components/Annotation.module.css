@@ -1,0 +1,73 @@
+.annotation {
+  --annotation-color: var(--color-ink);
+  display: grid;
+  color: var(--annotation-color);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.accent {
+  --annotation-color: var(--color-rust);
+}
+
+.visible {
+  opacity: 1;
+  transition-delay: 0.6s;
+}
+
+.right {
+  grid-template-columns: auto 70px;
+  align-items: center;
+  transform: translate(-100%, -50%);
+}
+
+.down-right {
+  grid-template-columns: auto 90px;
+  grid-template-rows: auto 60px;
+  transform: translate(-100%, -100%);
+}
+
+.down-right .leader {
+  grid-column: 2;
+  grid-row: 2;
+  width: 90px;
+  height: 60px;
+}
+
+.right .leader {
+  width: 70px;
+  height: 28px;
+}
+
+.leader path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.9s ease;
+}
+
+.visible .leader path {
+  stroke-dashoffset: 0;
+  transition-delay: 0.8s;
+}
+
+.label {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.caption {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}

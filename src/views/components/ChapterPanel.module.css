@@ -1,0 +1,137 @@
+.panel {
+  position: fixed;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: min(22rem, calc(100vw - 2.5rem));
+  color: var(--ink);
+  text-shadow: var(--ink-shadow);
+  pointer-events: none;
+}
+
+.visible {
+  pointer-events: auto;
+}
+
+.left {
+  left: clamp(1.25rem, 5vw, 4rem);
+  top: 55%;
+  transform: translateY(-30%);
+}
+
+.right {
+  right: clamp(3rem, 8vw, 7rem);
+  top: 48%;
+  transform: translateY(-30%);
+}
+
+.center {
+  left: 50%;
+  top: 80%;
+  align-items: center;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.eyebrow,
+.footnote,
+.hint {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.visible .eyebrow,
+.visible .footnote,
+.visible .hint {
+  opacity: 1;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--accent);
+}
+
+.left .eyebrow::before,
+.right .eyebrow::before {
+  content: '';
+  width: 1.4rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.body {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.cta {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.8s;
+}
+
+.visible .cta {
+  opacity: 1;
+}
+
+.footnote,
+.hint {
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.visible .footnote,
+.visible .hint {
+  transition-delay: 1s;
+}
+
+@media (max-width: 720px) {
+  .left,
+  .right {
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: 8vh;
+    padding: 1rem 1.1rem;
+    transform: translateX(-50%);
+  }
+
+  /* Backdrop keeps text readable over the model; only the active panel shows it. */
+  .left::before,
+  .right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 12px;
+    background: var(--panel-backdrop);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .visible::before {
+    opacity: 1;
+  }
+
+  .center {
+    top: 70%;
+  }
+}
