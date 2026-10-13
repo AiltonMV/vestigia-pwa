@@ -28,7 +28,9 @@ const fragmentShader = /* glsl */ `
   varying float vFacing;
 
   void main() {
-    float alpha = pow(vAlong, 1.6) * pow(vFacing, 1.5) * uOpacity;
+    // Varyings can drift slightly out of [0, 1] (e.g. MSAA at edges); pow() of a negative base is
+    // NaN on real GPUs, and bloom would smear that NaN across the whole screen as black.
+    float alpha = pow(clamp(vAlong, 0.0, 1.0), 1.6) * pow(clamp(vFacing, 0.0, 1.0), 1.5) * uOpacity;
     gl_FragColor = vec4(1.0, 0.95, 0.8, alpha);
   }
 `;

@@ -50,10 +50,11 @@ const fragmentShader = /* glsl */ `
 
     vec3 normal = normalize(vec3(-g.x, 1.0, -g.y));
     vec3 view = normalize(cameraPosition - vWorld);
-    float fresnel = pow(1.0 - max(dot(normal, view), 0.0), 4.0);
+    // Clamped so float error can't hand pow() a negative base (NaN on GPUs, black after bloom).
+    float fresnel = pow(clamp(1.0 - dot(normal, view), 0.0, 1.0), 4.0);
     vec3 color = mix(uDeep, uShallow, fresnel * 0.85);
 
-    float glint = pow(max(dot(reflect(-view, normal), uMoonDir), 0.0), 180.0);
+    float glint = pow(clamp(dot(reflect(-view, normal), uMoonDir), 0.0, 1.0), 180.0);
     color += vec3(1.0, 0.95, 0.82) * glint * 0.35;
 
     color = mix(color, uFogColor, smoothstep(uFogNear, uFogFar, dist));
