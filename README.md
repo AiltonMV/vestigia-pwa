@@ -193,9 +193,7 @@ Las fuentes se alojan en la propia app (WOFF2) para que se vean igual sin conexi
 
 ## 6. Tecnologías
 
-React · Vite · JavaScript · CSS modular · `vite-plugin-pwa` (Workbox) · IndexedDB · Spring Boot (backend) · Git y GitHub
-
-> **Pendiente:** el informe de planeación del proyecto indica TypeScript; este preproyecto usa JavaScript según el enunciado de la asignatura. Confirmar la decisión final con el profesor.
+React · Vite · TypeScript · CSS Modules · Three.js (React Three Fiber, drei, postprocessing) · `vite-plugin-pwa` (Workbox) · IndexedDB · Spring Boot (backend) · Git y GitHub
 
 ## 7. Estructura del proyecto
 
@@ -209,20 +207,25 @@ vestigia-pwa/
 │   └── fonts/
 ├── src/
 │   ├── views/
-│   │   ├── pages/        # LoginPage, SalasPage, SalaDetallePage
-│   │   └── components/   # SalaCard, OfflineBanner
-│   ├── controllers/      # Hooks: useSalaController, useProgresoController
-│   ├── services/         # Lógica de negocio: SalaService, ProgresoService
-│   ├── repositories/     # Acceso a datos: fetch + caché offline
+│   │   ├── pages/        # LandingPage, LoginPage, SalasPage, SalaDetallePage
+│   │   ├── components/   # Componentes genéricos: Button, RevealText, ChapterPanel…
+│   │   ├── three/        # Escena 3D de la página principal (faro, mar, lluvia)
+│   │   └── utils/
+│   ├── controllers/      # Hooks: useLandingController, useSalaController
+│   ├── hooks/            # Hooks genéricos de UI: useScrollProgress
+│   ├── services/         # Lógica de negocio: chapterService, SalaService
+│   ├── repositories/     # Acceso a datos: fetch + caché offline (data/ para contenido local)
 │   ├── dtos/             # Forma de la API (snake_case) y mappers
 │   ├── models/           # Objetos de dominio de la UI (camelCase)
-│   ├── config/           # apiConfig (URL base, tiempos de espera)
+│   ├── config/           # firebase, apiConfig
 │   ├── pwa/              # registerSW, useOnlineStatus, cola de sincronización
-│   ├── styles/           # CSS modular y variables de la guía de estilo
-│   ├── App.jsx
-│   └── main.jsx
-├── .env.example          # VITE_API_URL
-├── vite.config.js        # Configuración del plugin PWA
+│   ├── styles/           # Fuentes, variables de la guía de estilo y estilos globales
+│   ├── App.tsx
+│   └── main.tsx
+├── index.html
+├── package.json
+├── tsconfig*.json
+├── vite.config.ts        # Configuración de Vite (y del plugin PWA)
 └── README.md
 ```
 
