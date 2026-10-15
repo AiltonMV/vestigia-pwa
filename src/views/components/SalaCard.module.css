@@ -1,0 +1,78 @@
+.card {
+  display: grid;
+  gap: 10px;
+  padding: 18px 20px;
+  border: 1px solid rgb(255 252 244 / 0.12);
+  border-radius: 14px;
+  background: rgb(38 58 73 / 0.35);
+}
+
+.pending {
+  border-style: dashed;
+  border-color: rgb(255 204 0 / 0.6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag,
+.state,
+.pendingTag {
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tag {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgb(158 171 182 / 0.16);
+  color: var(--color-ivory);
+}
+
+.pueblo {
+  background: rgb(111 207 143 / 0.16);
+}
+
+.faro {
+  background: rgb(255 204 0 / 0.16);
+}
+
+.observatorio {
+  background: rgb(140 160 255 / 0.18);
+}
+
+.state {
+  color: #6fcf8f;
+}
+
+.inactive {
+  color: var(--color-mist);
+}
+
+.pendingTag {
+  color: var(--color-yellow);
+}
+
+.name {
+  margin: 0;
+  font: 500 var(--step-1) / 1.2 var(--font-serif);
+  color: var(--color-ivory);
+}
+
+.description {
+  margin: 0;
+  font: 400 var(--step-0) / 1.5 var(--font-serif);
+  color: var(--color-mist);
+}
+
+.meta {
+  margin: 0;
+  font: 500 var(--step--1) / 1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+  color: rgb(158 171 182 / 0.8);
+}

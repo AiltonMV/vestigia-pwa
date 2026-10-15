@@ -14,6 +14,12 @@
   pointer-events: none;
 }
 
+.tappable {
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
 .initial {
   font-weight: 700;
 }

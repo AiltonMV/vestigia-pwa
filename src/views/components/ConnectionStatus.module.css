@@ -1,0 +1,43 @@
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid rgb(255 252 244 / 0.18);
+  border-radius: 999px;
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.online .dot {
+  color: #6fcf8f;
+  box-shadow: 0 0 0 3px rgb(111 207 143 / 0.2);
+}
+
+.offline {
+  border-color: rgb(255 120 100 / 0.5);
+}
+
+.offline .dot {
+  color: #ff7864;
+}
+
+.pending {
+  border-color: var(--color-yellow);
+  color: var(--color-yellow);
+}
