@@ -1,0 +1,75 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: var(--color-navy);
+  transition:
+    opacity 0.9s ease 0.35s,
+    visibility 0.9s 0.35s;
+}
+
+.done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.content {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+}
+
+.logo {
+  margin: 0;
+  font: 400 clamp(56px, 12vw, 120px) / 1 var(--font-logo);
+  color: var(--color-yellow);
+}
+
+.bar {
+  position: relative;
+  width: 160px;
+  height: 1px;
+  overflow: hidden;
+  background: rgb(255 252 244 / 0.18);
+}
+
+/* Indeterminate: a short light keeps crossing the line until the scene is ready. */
+.bar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: var(--color-yellow);
+  animation: sweep 1.2s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+}
+
+.done .bar i {
+  width: 100%;
+  animation: none;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(290%);
+  }
+}
+
+.message {
+  margin: 0;
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar i {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}

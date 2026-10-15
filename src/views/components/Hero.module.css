@@ -1,0 +1,81 @@
+.hero {
+  position: fixed;
+  z-index: 4;
+  inset: auto 0 0;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 0 var(--gutter) calc(env(safe-area-inset-bottom, 0px) + clamp(28px, 6vh, 56px));
+  text-align: center;
+  pointer-events: none;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin: 0;
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.meta i {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.tagline {
+  max-width: 40ch;
+  margin: 0;
+  font: 400 var(--step-0) / 1.5 var(--font-serif);
+  color: var(--ink-soft);
+  text-wrap: balance;
+}
+
+.hint {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 500 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* A drop of light running down the line, inviting to scroll. */
+.drip {
+  position: relative;
+  width: 1px;
+  height: 44px;
+  overflow: hidden;
+  background: linear-gradient(var(--ink-soft), transparent);
+}
+
+.drip::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 14px;
+  background: var(--accent);
+  animation: drip 2.2s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+}
+
+@keyframes drip {
+  from {
+    top: -14px;
+  }
+  to {
+    top: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drip::after {
+    animation: none;
+  }
+}

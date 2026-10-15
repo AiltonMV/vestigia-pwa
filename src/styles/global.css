@@ -7,9 +7,24 @@
   box-sizing: border-box;
 }
 
+html {
+  background: var(--color-bg);
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-text);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
