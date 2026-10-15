@@ -1,10 +1,3 @@
-export type Vector3Dto = [number, number, number];
-
-export interface CameraShotDto {
-  position: Vector3Dto;
-  target: Vector3Dto;
-}
-
 export interface CallToActionDto {
   label: string;
   href: string;
@@ -13,6 +6,7 @@ export interface CallToActionDto {
 export interface ChapterDto {
   id: string;
   order: number;
+  kind: 'cover' | 'chapter';
   section_label: string;
   eyebrow: string | null;
   title: string | null;
@@ -22,8 +16,7 @@ export interface ChapterDto {
   hint: string | null;
   cta: CallToActionDto | null;
   align: 'left' | 'right' | 'center';
-  theme: 'night' | 'notebook';
-  logo: 'bright' | 'dim';
-  glitch: boolean;
-  camera: CameraShotDto;
+  /** Stretch of the scroll story (0 → 1) where the chapter is on screen; > 1 means it stays. */
+  start: number;
+  end: number;
 }

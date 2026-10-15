@@ -1,58 +1,65 @@
+import { REVEAL, useChapterReveal } from '@/hooks/useChapterReveal';
 import type { CallToAction, ChapterAlign } from '@/models/Chapter';
+import type { StoryClock } from '@/views/story/StoryClock';
 import { cx } from '@/views/utils/cx';
+import { ArrowIcon } from './ArrowIcon';
 import { Button } from './Button';
-import { countWords } from '@/views/utils/text';
-import { REVEAL_STEP_MS, RevealText } from './RevealText';
+import { RevealText } from './RevealText';
 import styles from './ChapterPanel.module.css';
 
 interface ChapterPanelProps {
+  clock: StoryClock;
+  /** Scroll story range the chapter is on screen. */
+  start: number;
+  end: number;
   eyebrow?: string;
   title?: string;
   body?: string;
   highlight?: string;
   footnote?: string;
-  hint?: string;
   cta?: CallToAction;
   align: ChapterAlign;
-  visible: boolean;
 }
 
-/** One block of story text: eyebrow, title, body and optional call to action. */
+/** One block of story text, revealed word by word as the reader scrolls through it. */
 export function ChapterPanel({
+  clock,
+  start,
+  end,
   eyebrow,
   title,
   body,
   highlight,
   footnote,
-  hint,
   cta,
   align,
-  visible,
 }: ChapterPanelProps) {
-  const bodyDelay = countWords(title) * REVEAL_STEP_MS;
+  const root = useChapterReveal<HTMLElement>(clock, start, end);
 
   return (
-    <div className={cx(styles.panel, styles[align], visible && styles.visible)}>
-      {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
-      {title && (
-        <RevealText
-          as="h2"
-          className={styles.title}
-          text={title}
-          highlight={highlight}
-          visible={visible}
-        />
+    <article ref={root} className={cx(styles.panel, styles[align])}>
+      {eyebrow && (
+        <p className={styles.eyebrow} {...{ [REVEAL.lead]: '' }}>
+          {eyebrow}
+        </p>
       )}
-      {body && (
-        <RevealText className={styles.body} text={body} visible={visible} delay={bodyDelay} />
-      )}
+      {title && <RevealText as="h2" className={styles.title} text={title} highlight={highlight} />}
+      {body && <RevealText className={styles.body} text={body} />}
       {cta && (
-        <Button href={cta.href} icon="→" className={styles.cta} tabIndex={visible ? 0 : -1}>
+        <Button
+          href={cta.href}
+          icon={<ArrowIcon />}
+          className={styles.cta}
+          {...{ [REVEAL.extra]: '' }}
+        >
           {cta.label}
         </Button>
       )}
-      {footnote && <p className={styles.footnote}>{footnote}</p>}
-      {hint && <p className={styles.hint}>{hint}</p>}
-    </div>
+      {footnote && (
+        <p className={styles.footnote} {...{ [REVEAL.extra]: '' }}>
+          {footnote}
+        </p>
+      )}
+    </article>
   );
 }

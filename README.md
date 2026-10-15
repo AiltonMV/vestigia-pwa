@@ -193,7 +193,7 @@ Las fuentes se alojan en la propia app (WOFF2) para que se vean igual sin conexi
 
 ## 6. Tecnologías
 
-React · Vite · TypeScript · CSS Modules · Three.js (React Three Fiber, drei, postprocessing) · `vite-plugin-pwa` (Workbox) · IndexedDB · Spring Boot (backend) · Git y GitHub
+React · Vite · TypeScript · CSS Modules · Three.js (React Three Fiber) · Web Audio · `vite-plugin-pwa` (Workbox) · IndexedDB · Spring Boot (backend) · Git y GitHub
 
 ## 7. Estructura del proyecto
 
@@ -209,10 +209,12 @@ vestigia-pwa/
 │   ├── views/
 │   │   ├── pages/        # LandingPage, LoginPage, SalasPage, SalaDetallePage
 │   │   ├── components/   # Componentes genéricos: Button, RevealText, ChapterPanel…
-│   │   ├── three/        # Escena 3D de la página principal (faro, mar, lluvia)
+│   │   ├── three/        # Escena 3D por pases: noche, libreta (lápiz y acuarela) e interferencia
+│   │   ├── story/        # Reloj de la historia: scroll con inercia → progreso 0–1 y tramos
+│   │   ├── audio/        # Sonido de tormenta sintetizado (sin archivos)
 │   │   └── utils/
 │   ├── controllers/      # Hooks: useLandingController, useSalaController
-│   ├── hooks/            # Hooks genéricos de UI: useScrollProgress
+│   ├── hooks/            # Hooks de UI: useStoryClock, useChapterReveal, useInkTheme, useAmbientSound
 │   ├── services/         # Lógica de negocio: chapterService, SalaService
 │   ├── repositories/     # Acceso a datos: fetch + caché offline (data/ para contenido local)
 │   ├── dtos/             # Forma de la API (snake_case) y mappers

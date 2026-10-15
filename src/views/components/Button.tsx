@@ -18,7 +18,11 @@ export function Button({ children, icon, className, ...props }: ButtonProps) {
   const content = (
     <>
       {children}
-      {icon && <span aria-hidden>{icon}</span>}
+      {icon && (
+        <span className={styles.icon} aria-hidden>
+          {icon}
+        </span>
+      )}
     </>
   );
   const classes = cx(styles.button, className);

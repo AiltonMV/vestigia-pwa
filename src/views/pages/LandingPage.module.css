@@ -1,27 +1,46 @@
+/* Layers: canvas → notebook notes and scrim → chapter text → top bar, rail and sound. */
 .page {
+  /* Interface tokens; `useInkTheme` blends them towards the notebook while scrolling. */
   --ink: var(--color-ivory);
-  --ink-muted: var(--color-mist);
+  --ink-soft: rgb(255 252 244 / 0.62);
+  --rule: rgb(255 252 244 / 0.22);
   --accent: var(--color-yellow);
-  --ink-shadow: 0 1px 14px rgb(0 15 32 / 0.7);
-  --panel-backdrop: rgb(0 15 32 / 0.55);
   position: relative;
-}
-
-.page[data-theme='notebook'] {
-  --ink: var(--color-ink);
-  --ink-muted: #5a5048;
-  --accent: var(--color-rust);
-  --ink-shadow: none;
-  --panel-backdrop: rgb(240 230 208 / 0.85);
+  color: var(--ink);
 }
 
 .stage {
   position: fixed;
   inset: 0;
   z-index: 0;
+  height: 100vh;
+  height: 100lvh;
+  pointer-events: none;
 }
 
-.section {
-  height: 100vh;
-  height: 100svh;
+.chapters {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  z-index: -1;
+  height: 1100vh;
+}
+
+.noWebgl {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding-inline: 24px;
+  background: var(--color-navy);
+  color: var(--color-ivory);
+  font: 400 var(--step-0) / 1.5 var(--font-serif);
+  text-align: center;
 }
