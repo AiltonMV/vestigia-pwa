@@ -1,0 +1,40 @@
+export type EscenarioDto = 'pueblo' | 'faro' | 'observatorio';
+
+/** Sala tal como la devuelve la API. */
+export interface SalaDto {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  escenario: EscenarioDto;
+  activa: boolean;
+  /** Hora local sin zona; lo pone el servidor y puede traer microsegundos. */
+  creada_en: string;
+}
+
+/** Campos que se pueden escribir: cuerpo del PUT (reemplaza la sala completa). */
+export interface SalaCambiosDto {
+  nombre: string;
+  descripcion: string | null;
+  escenario: EscenarioDto;
+  activa: boolean;
+}
+
+/** Cuerpo del POST: el `id` lo genera la PWA. `creada_en` no se manda: lo pone el servidor. */
+export interface NuevaSalaDto extends SalaCambiosDto {
+  id: string;
+}
+
+export interface ApiFieldErrorDto {
+  field: string;
+  message: string;
+}
+
+/** Cuerpo uniforme de error del backend. */
+export interface ApiErrorDto {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  path: string;
+  details?: ApiFieldErrorDto[];
+}

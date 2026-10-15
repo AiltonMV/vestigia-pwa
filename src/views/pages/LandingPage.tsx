@@ -7,6 +7,7 @@ import { Hero } from '@/views/components/Hero';
 import { Loader } from '@/views/components/Loader';
 import { ProgressRail, type RailStop } from '@/views/components/ProgressRail';
 import { Scrim } from '@/views/components/Scrim';
+import { SecretPassage } from '@/views/components/SecretPassage';
 import { SoundToggle } from '@/views/components/SoundToggle';
 import { TopBar } from '@/views/components/TopBar';
 import { RAIL_SPAN } from '@/views/story/timeline';
@@ -15,14 +16,25 @@ import styles from './LandingPage.module.css';
 
 const BRAND = 'Vestigia';
 const LOADING_MESSAGE = 'Armando la maqueta';
+const SECRET_MESSAGE = 'Frecuencia encontrada';
 const NO_WEBGL_MESSAGE =
   'Tu navegador no tiene WebGL 2 disponible. Abre esta página en una versión reciente de Chrome, Edge, Safari o Firefox.';
 
 const LighthouseCanvas = lazy(() => import('@/views/three/LighthouseCanvas'));
 
 export function LandingPage() {
-  const { chapters, cover, storyChapters, activeIndex, activeChapter, clock, goToChapter, sound } =
-    useLandingController();
+  const {
+    chapters,
+    cover,
+    storyChapters,
+    activeIndex,
+    activeChapter,
+    clock,
+    goToChapter,
+    sound,
+    openingSalas,
+    tapLogo,
+  } = useLandingController();
   const page = useRef<HTMLDivElement>(null);
   const [webgl] = useState(supportsWebGL2);
   const [ready, setReady] = useState(false);
@@ -54,6 +66,7 @@ export function LandingPage() {
           current={activeIndex}
           total={chapters.length - 1}
           label={activeChapter.sectionLabel}
+          onLogoTap={tapLogo}
         />
       )}
       <ProgressRail
@@ -95,6 +108,8 @@ export function LandingPage() {
 
       {/* The long scroll only drives the story timeline; everything above is fixed. */}
       <div className={styles.track} />
+
+      <SecretPassage active={openingSalas} message={SECRET_MESSAGE} />
 
       {webgl ? (
         <Loader brand={BRAND} message={LOADING_MESSAGE} done={ready} />
