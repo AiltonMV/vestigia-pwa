@@ -1,0 +1,18 @@
+2026-10-15T00:05:58.053-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.SQL                        : select sm1_0.id,sm1_0.activa,sm1_0.creada_en,sm1_0.descripcion,sm1_0.escenario,sm1_0.nombre from salas sm1_0 where sm1_0.id=?
+2026-10-15T00:05:58.373-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [e0b40591-1270-43df-8d8c-f10ce11a3a82]
+2026-10-15T00:05:58.490-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.SQL                        : select sm1_0.id,sm1_0.activa,sm1_0.creada_en,sm1_0.descripcion,sm1_0.escenario,sm1_0.nombre from salas sm1_0 where sm1_0.id=?
+2026-10-15T00:05:58.493-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [e0b40591-1270-43df-8d8c-f10ce11a3a82]
+2026-10-15T00:05:58.525-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.SQL                        : insert into salas (activa,creada_en,descripcion,escenario,nombre,id) values (?,?,?,?,?,?)
+2026-10-15T00:05:58.528-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BOOLEAN) <- [true]
+2026-10-15T00:05:58.531-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:TIMESTAMP) <- [2026-10-15T00:05:58.476864]
+2026-10-15T00:05:58.536-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (3:VARCHAR) <- [Prueba de sincronizacion]
+2026-10-15T00:05:58.537-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (4:VARCHAR) <- [faro]
+2026-10-15T00:05:58.538-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [Sala laboratorio offline]
+2026-10-15T00:05:58.539-06:00 TRACE 2140 --- [vestigia] [http-nio-8088-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (6:UUID) <- [e0b40591-1270-43df-8d8c-f10ce11a3a82]
+2026-10-15T00:05:58.628-06:00  INFO 2140 --- [vestigia] [http-nio-8088-exec-10] c.vestigia.config.RequestLoggingFilter   : [API] POST /api/salas -> 201 | 922 ms | heap 39/1846 MB
+2026-10-15T00:06:06.798-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-1] org.hibernate.SQL                        : select sm1_0.id,sm1_0.activa,sm1_0.creada_en,sm1_0.descripcion,sm1_0.escenario,sm1_0.nombre from salas sm1_0 order by sm1_0.creada_en
+2026-10-15T00:06:06.881-06:00  INFO 2140 --- [vestigia] [http-nio-8088-exec-1] c.vestigia.config.RequestLoggingFilter   : [API] GET /api/salas -> 200 | 123 ms | heap 39/1846 MB
+2026-10-15T00:09:33.108-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-8] org.hibernate.SQL                        : select sm1_0.id,sm1_0.activa,sm1_0.creada_en,sm1_0.descripcion,sm1_0.escenario,sm1_0.nombre from salas sm1_0 order by sm1_0.creada_en
+2026-10-15T00:09:33.200-06:00  INFO 2140 --- [vestigia] [http-nio-8088-exec-8] c.vestigia.config.RequestLoggingFilter   : [API] GET /api/salas -> 200 | 166 ms | heap 40/1846 MB
+2026-10-15T00:09:50.114-06:00 DEBUG 2140 --- [vestigia] [http-nio-8088-exec-4] org.hibernate.SQL                        : select sm1_0.id,sm1_0.activa,sm1_0.creada_en,sm1_0.descripcion,sm1_0.escenario,sm1_0.nombre from salas sm1_0 order by sm1_0.creada_en
+2026-10-15T00:09:50.130-06:00  INFO 2140 --- [vestigia] [http-nio-8088-exec-4] c.vestigia.config.RequestLoggingFilter   : [API] GET /api/salas -> 200 | 26 ms | heap 40/1846 MB

@@ -296,3 +296,7 @@ El título lleva el prefijo del tipo de cambio. La descripción indica qué hace
 - [ ] Implementar el Service Worker y la cola de sincronización.
 - [ ] Definir las reglas de seguridad y el manejo de sesión de administrador.
 - [ ] Agregar pruebas y un flujo de GitHub Actions (instalar, analizar, probar y compilar).
+
+## Documentación del laboratorio
+
+[Consultar instrucciones, reporte y evidencias](docs/laboratorio/README.md)
