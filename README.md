@@ -252,6 +252,13 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 
 > El Service Worker solo se activa en el build de producción (`preview`) o en `localhost`.
 
+### Salas (laboratorio)
+
+- **Entrada:** en la página principal, código Konami (↑ ↑ ↓ ↓ ← → ← → B A); en teléfono, 5 toques seguidos al logo «V / Vestigia». También se abre directo en `/salas`.
+- **Con el backend real:** `VITE_API_URL=http://localhost:8080` y `VITE_API_MOCK=false` en `.env`.
+- **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`; los datos se reinician al reiniciar el servidor.
+- **Offline:** el listado se sirve con *stale-while-revalidate*; las altas sin red se guardan en IndexedDB (`vestigia` → `salasPendientes`) con su UUID y se reenvían en orden al volver la conexión (el `POST` es idempotente, no duplica).
+
 ## 9. Flujo de trabajo en Git
 
 ### Ramas
