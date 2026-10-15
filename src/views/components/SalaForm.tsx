@@ -5,6 +5,7 @@ import {
   NOMBRE_MAX,
   type ErroresDeCampo,
   type NuevaSala,
+  type Sala,
 } from '@/models/Sala';
 import { tieneErrores, validarNuevaSala } from '@/services/salaValidation';
 import { Button } from './Button';
@@ -14,15 +15,28 @@ import styles from './SalaForm.module.css';
 
 const VACIA: NuevaSala = { nombre: '', descripcion: '', escenario: '', activa: true };
 
+const datosDe = (sala: Sala): NuevaSala => ({
+  nombre: sala.nombre,
+  descripcion: sala.descripcion ?? '',
+  escenario: sala.escenario,
+  activa: sala.activa,
+});
+
 interface SalaFormProps {
+  /** Sala a editar. Sin ella, el formulario da de alta una nueva. */
+  sala?: Sala;
   /** Devuelve los errores por campo, o `null` si se guardó. */
   onSubmit: (sala: NuevaSala) => Promise<ErroresDeCampo | null>;
+  onCancel?: () => void;
   guardando: boolean;
 }
 
-/** Alta de sala: valida en el cliente y muestra junto a cada campo los errores del servidor. */
-export function SalaForm({ onSubmit, guardando }: SalaFormProps) {
-  const [datos, setDatos] = useState<NuevaSala>(VACIA);
+/**
+ * Alta o edición de una sala: valida en el cliente y muestra junto a cada campo los errores
+ * del servidor. Para cambiar de sala, móntalo con otra `key`.
+ */
+export function SalaForm({ sala, onSubmit, onCancel, guardando }: SalaFormProps) {
+  const [datos, setDatos] = useState<NuevaSala>(() => (sala ? datosDe(sala) : VACIA));
   const [errores, setErrores] = useState<ErroresDeCampo>({});
 
   const cambiar = <K extends keyof NuevaSala>(campo: K, valor: NuevaSala[K]) => {
@@ -41,12 +55,12 @@ export function SalaForm({ onSubmit, guardando }: SalaFormProps) {
     if (tieneErrores(locales)) return;
     const delServidor = await onSubmit(datos);
     if (delServidor) setErrores(delServidor);
-    else setDatos(VACIA);
+    else if (!sala) setDatos(VACIA);
   };
 
   return (
     <form className={styles.form} onSubmit={enviar} noValidate>
-      <h2 className={styles.title}>Nueva sala</h2>
+      <h2 className={styles.title}>{sala ? 'Editar sala' : 'Nueva sala'}</h2>
 
       <FormField label="Nombre" htmlFor="sala-nombre" error={errores.nombre}>
         <input
@@ -98,9 +112,16 @@ export function SalaForm({ onSubmit, guardando }: SalaFormProps) {
         Sala activa
       </label>
 
-      <Button type="submit" disabled={guardando} className={styles.submit}>
-        {guardando ? 'Guardando…' : 'Guardar sala'}
-      </Button>
+      <div className={styles.actions}>
+        <Button type="submit" disabled={guardando}>
+          {guardando ? 'Guardando…' : sala ? 'Guardar cambios' : 'Guardar sala'}
+        </Button>
+        {onCancel && (
+          <button type="button" className={styles.cancel} onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
+      </div>
     </form>
   );
 }
