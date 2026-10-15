@@ -1,10 +1,22 @@
-import type { Vector3Tuple } from '@/models/Chapter';
+import { islandHeight } from './terrain';
 
-/** Shared world positions so scene pieces stay aligned with the lighthouse model. */
-export const GROUND_Y = 0.3;
-export const TOWER_BOTTOM_Y = 0.9;
-export const TOWER_HEIGHT = 5.7;
-export const GALLERY_Y = TOWER_BOTTOM_Y + TOWER_HEIGHT;
-export const LAMP_POSITION: Vector3Tuple = [0, GALLERY_Y + 0.9, 0];
-export const HOUSE_POSITION: Vector3Tuple = [2.3, GROUND_Y, 0.9];
-export const LOGO_POSITION: Vector3Tuple = [0, 6.2, -3.5];
+export type Point3 = [number, number, number];
+
+/** Render layers: solid geometry is drawn in every pass, the rest only where it belongs. */
+export const LAYERS = { solid: 0, night: 1, title: 2 } as const;
+
+/** Where the lighthouse stands on the island. */
+export const LIGHTHOUSE_BASE_Y = islandHeight(0, 0) - 0.02;
+export const LIGHTHOUSE_HEIGHT = 6.4;
+
+/** Tower body, measured from the lighthouse base. */
+export const TOWER = { bottom: 0.42, top: 4.35, radiusBottom: 1, radiusTop: 0.64, bands: 6 };
+export const LANTERN_Y = TOWER.top + 0.82;
+
+export const LAMP_POINT: Point3 = [0, LIGHTHOUSE_BASE_Y + LANTERN_Y, 0];
+export const BASE_POINT: Point3 = [0, LIGHTHOUSE_BASE_Y + 0.5, 0];
+export const TOP_POINT: Point3 = [0, LIGHTHOUSE_BASE_Y + LIGHTHOUSE_HEIGHT * 0.99, 0];
+
+export const COTTAGE = { x: 1.55, z: 0.95, rotation: -0.5 };
+
+export const isCompactDevice = () => matchMedia('(max-width: 720px), (pointer: coarse)').matches;

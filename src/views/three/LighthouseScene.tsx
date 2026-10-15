@@ -1,46 +1,39 @@
-import { Suspense, type RefObject } from 'react';
-import type { CameraShot } from '@/models/Chapter';
-import { CameraRig } from './CameraRig';
-import { Atmosphere } from './environment/Atmosphere';
-import { LightBeams } from './environment/LightBeams';
-import { Lighting } from './environment/Lighting';
-import { Ocean } from './environment/Ocean';
+import { useMemo } from 'react';
+import type { StoryClock } from '@/views/story/StoryClock';
+import { CameraDirector } from './CameraDirector';
+import { Compositor } from './Compositor';
+import { Lights } from './environment/Lights';
 import { Rain } from './environment/Rain';
-import { Logo } from './Logo';
-import { Lighthouse } from './model/Lighthouse';
-import { SceneAnnotations } from './SceneAnnotations';
-import { SceneEffects } from './SceneEffects';
-import { LAMP_POSITION, LOGO_POSITION } from './sceneLayout';
-import { SceneStateProvider, type SceneTargets } from './SceneState';
+import { Sea } from './environment/Sea';
+import { Sky } from './environment/Sky';
+import { Diorama } from './model/Diorama';
+import { NoteAnchors } from './NoteAnchors';
+import { NIGHT_FOG_DENSITY } from './SceneLook';
+import { createSceneRig, SceneRigContext } from './SceneRig';
+import { Title } from './Title';
 
-export interface LighthouseSceneProps extends SceneTargets {
+const FOG_COLOR = '#020a16';
+
+export interface LighthouseSceneProps {
+  clock: StoryClock;
   title: string;
-  shots: CameraShot[];
-  progressRef: RefObject<number>;
-  labelElementsRef: RefObject<Map<string, HTMLElement>>;
 }
 
-export function LighthouseScene({
-  title,
-  shots,
-  progressRef,
-  labelElementsRef,
-  ...targets
-}: LighthouseSceneProps) {
+export function LighthouseScene({ clock, title }: LighthouseSceneProps) {
+  const rig = useMemo(() => createSceneRig(clock), [clock]);
+
   return (
-    <SceneStateProvider {...targets}>
-      <Atmosphere />
-      <Lighting />
-      <CameraRig shots={shots} progressRef={progressRef} />
-      <Ocean />
+    <SceneRigContext.Provider value={rig}>
+      <fogExp2 attach="fog" args={[FOG_COLOR, NIGHT_FOG_DENSITY]} />
+      <CameraDirector />
+      <Lights />
+      <Sky />
+      <Sea />
       <Rain />
-      <Lighthouse />
-      <LightBeams position={LAMP_POSITION} />
-      <Suspense fallback={null}>
-        <Logo text={title} position={LOGO_POSITION} size={4.2} />
-      </Suspense>
-      <SceneAnnotations labelElementsRef={labelElementsRef} />
-      <SceneEffects />
-    </SceneStateProvider>
+      <Diorama />
+      <Title text={title} />
+      <NoteAnchors />
+      <Compositor />
+    </SceneRigContext.Provider>
   );
 }

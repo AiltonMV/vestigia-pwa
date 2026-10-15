@@ -1,13 +1,6 @@
-export type Vector3Tuple = [number, number, number];
-
 export type ChapterAlign = 'left' | 'right' | 'center';
 
-export type ChapterTheme = 'night' | 'notebook';
-
-export interface CameraShot {
-  position: Vector3Tuple;
-  target: Vector3Tuple;
-}
+export type ChapterKind = 'cover' | 'chapter';
 
 export interface CallToAction {
   label: string;
@@ -17,6 +10,7 @@ export interface CallToAction {
 export interface Chapter {
   id: string;
   order: number;
+  kind: ChapterKind;
   sectionLabel: string;
   eyebrow?: string;
   title?: string;
@@ -26,8 +20,7 @@ export interface Chapter {
   hint?: string;
   cta?: CallToAction;
   align: ChapterAlign;
-  theme: ChapterTheme;
-  logoBright: boolean;
-  glitch: boolean;
-  camera: CameraShot;
+  /** Scroll story progress (0 → 1) where the chapter enters and leaves. */
+  start: number;
+  end: number;
 }
