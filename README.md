@@ -255,9 +255,10 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 ### Salas (laboratorio)
 
 - **Entrada:** en la página principal, código Konami (↑ ↑ ↓ ↓ ← → ← → B A); en teléfono, 5 toques seguidos al logo «V / Vestigia». También se abre directo en `/salas`.
-- **Con el backend real:** `VITE_API_URL=http://localhost:8080` y `VITE_API_MOCK=false` en `.env`.
+- **Con el backend real** (monorepo `Vestigia`, carpeta `backend/vestigia`; pasos en su `docs/README.md`): `VITE_API_URL=http://localhost:8080` y `VITE_API_MOCK=false` en `.env`. La PWA debe correr en el puerto 5173 (`dev`) o 4173 (`preview`): otro puerto lo bloquea CORS.
+- **Operaciones:** listado y alta (también sin conexión), edición (`PUT`) y borrado con confirmación (`DELETE`). Editar y borrar necesitan conexión, salvo borrar una sala pendiente, que solo se quita de la cola local.
 - **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`; los datos se reinician al reiniciar el servidor.
-- **Offline:** el listado se sirve con *stale-while-revalidate*; las altas sin red se guardan en IndexedDB (`vestigia` → `salasPendientes`) con su UUID y se reenvían en orden al volver la conexión (el `POST` es idempotente, no duplica).
+- **Offline:** el listado se sirve con *stale-while-revalidate* (solo los `GET` se cachean); las altas sin red se guardan en IndexedDB (`vestigia` → `salasPendientes`) con su UUID y se reenvían en orden al volver la conexión (el `POST` es idempotente, no duplica). Al reenviar: 201/200 la confirma, un 400 no se reintenta (se descarta y se avisa) y un 500 la deja en la cola para el siguiente intento.
 
 ## 9. Flujo de trabajo en Git
 

@@ -114,6 +114,25 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
     return send(res, 201, sala);
   }
 
+  if (req.method === 'PUT' && found) {
+    let body: Partial<Sala>;
+    try {
+      body = (await readBody(req)) as Partial<Sala>;
+    } catch {
+      return sendError(res, 400, 'JSON malformado o ilegible');
+    }
+    // The id in the path wins over the body's; creada_en never changes.
+    const details = validate({ ...body, id: found.id });
+    if (details.length) return sendError(res, 400, 'Datos inválidos', details);
+    Object.assign(found, {
+      nombre: body.nombre!.trim(),
+      descripcion: body.descripcion?.trim() || null,
+      escenario: body.escenario!,
+      activa: body.activa ?? true,
+    });
+    return send(res, 200, found);
+  }
+
   if (req.method === 'DELETE' && found) {
     salas.splice(salas.indexOf(found), 1);
     return send(res, 204);
