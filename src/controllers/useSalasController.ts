@@ -2,7 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import type { ErroresDeCampo, NuevaSala, Sala } from '@/models/Sala';
 import { NetworkError } from '@/repositories/http/httpClient';
-import { SalaInvalidaError, salaService, type SalaService } from '@/services/salaService';
+import {
+  SalaInvalidaError,
+  SalaNoEncontradaError,
+  salaService,
+  type SalaService,
+} from '@/services/salaService';
 
 export type EstadoCarga = 'cargando' | 'listo' | 'error';
 
@@ -17,6 +22,20 @@ function reemplazar(actuales: Sala[], nuevas: Sala[]): Sala[] {
   return actuales.map((sala) => porId.get(sala.id) ?? sala);
 }
 
+const sinLas = (actuales: Sala[], quitar: Sala[]) => {
+  const ids = new Set(quitar.map(({ id }) => id));
+  return actuales.filter(({ id }) => !ids.has(id));
+};
+
+/** Mensaje para el usuario cuando falla una escritura (`accion`: "guardar", "borrar"…). */
+function mensajeDeError(error: unknown, accion: string): string {
+  if (error instanceof SalaInvalidaError || error instanceof SalaNoEncontradaError) {
+    return error.message;
+  }
+  if (error instanceof NetworkError) return `Necesitas conexión para ${accion} la sala.`;
+  return `El servidor no pudo ${accion} la sala. Intenta de nuevo.`;
+}
+
 export function useSalasController(service: SalaService = salaService) {
   const online = useOnlineStatus();
   const [salas, setSalas] = useState<Sala[]>([]);
@@ -25,6 +44,8 @@ export function useSalasController(service: SalaService = salaService) {
   const [aviso, setAviso] = useState<Aviso>();
   const [guardando, setGuardando] = useState(false);
   const [sincronizando, setSincronizando] = useState(false);
+  /** Sala abierta en el formulario para editarla; sin valor, el formulario da de alta. */
+  const [editando, setEditando] = useState<Sala>();
   const syncing = useRef(false);
 
   const pendientes = salas.filter((sala) => sala.pendiente).length;
@@ -57,10 +78,10 @@ export function useSalasController(service: SalaService = salaService) {
     syncing.current = true;
     setSincronizando(true);
     try {
-      const { sincronizadas, error } = await service.syncPendientes();
+      const { sincronizadas, descartadas, error } = await service.syncPendientes();
       // Se reemplazan con la respuesta del servidor: recargar devolvería primero la copia
       // anterior de la caché (stale-while-revalidate) y las haría desaparecer un momento.
-      if (sincronizadas.length) setSalas((actuales) => reemplazar(actuales, sincronizadas));
+      setSalas((actuales) => sinLas(reemplazar(actuales, sincronizadas), descartadas));
       if (error) setAviso({ tono: 'error', texto: error });
       else if (sincronizadas.length) {
         const n = sincronizadas.length;
@@ -87,10 +108,18 @@ export function useSalasController(service: SalaService = salaService) {
     if (online && cargado) void sincronizar();
   }, [online, cargado, sincronizar]);
 
-  const crear = useCallback(
+  /** Alta o edición, según haya una sala abierta. Devuelve los errores por campo o `null`. */
+  const guardar = useCallback(
     async (datos: NuevaSala): Promise<ErroresDeCampo | null> => {
       setGuardando(true);
       try {
+        if (editando) {
+          const sala = await service.updateSala(editando.id, datos);
+          setSalas((actuales) => reemplazar(actuales, [sala]));
+          setEditando(undefined);
+          setAviso({ tono: 'exito', texto: `Sala «${sala.nombre}» actualizada.` });
+          return null;
+        }
         const sala = await service.createSala(datos);
         setSalas((actuales) => [...actuales.filter(({ id }) => id !== sala.id), sala]);
         setAviso(
@@ -103,17 +132,28 @@ export function useSalasController(service: SalaService = salaService) {
         );
         return null;
       } catch (error) {
-        if (error instanceof SalaInvalidaError) {
-          setAviso({ tono: 'error', texto: error.message });
-          return error.campos;
+        if (editando && error instanceof SalaNoEncontradaError) {
+          setSalas((actuales) => sinLas(actuales, [editando]));
+          setEditando(undefined);
         }
-        setAviso({
-          tono: 'error',
-          texto: 'El servidor no pudo guardar la sala. Intenta de nuevo.',
-        });
-        return {};
+        setAviso({ tono: 'error', texto: mensajeDeError(error, 'guardar') });
+        return error instanceof SalaInvalidaError ? error.campos : {};
       } finally {
         setGuardando(false);
+      }
+    },
+    [service, editando],
+  );
+
+  const eliminar = useCallback(
+    async (sala: Sala) => {
+      try {
+        await service.deleteSala(sala);
+        setSalas((actuales) => sinLas(actuales, [sala]));
+        setEditando((actual) => (actual?.id === sala.id ? undefined : actual));
+        setAviso({ tono: 'exito', texto: `Sala «${sala.nombre}» borrada.` });
+      } catch (error) {
+        setAviso({ tono: 'error', texto: mensajeDeError(error, 'borrar') });
       }
     },
     [service],
@@ -129,7 +169,11 @@ export function useSalasController(service: SalaService = salaService) {
     sincronizando,
     aviso,
     cerrarAviso: () => setAviso(undefined),
-    crear,
+    editando,
+    editar: setEditando,
+    cancelarEdicion: () => setEditando(undefined),
+    guardar,
+    eliminar,
     recargar: () => {
       setEstado('cargando');
       void cargar();
