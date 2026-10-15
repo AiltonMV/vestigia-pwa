@@ -5,6 +5,7 @@ export function toChapter(dto: ChapterDto): Chapter {
   return {
     id: dto.id,
     order: dto.order,
+    kind: dto.kind,
     sectionLabel: dto.section_label,
     eyebrow: dto.eyebrow ?? undefined,
     title: dto.title ?? undefined,
@@ -14,12 +15,7 @@ export function toChapter(dto: ChapterDto): Chapter {
     hint: dto.hint ?? undefined,
     cta: dto.cta ?? undefined,
     align: dto.align,
-    theme: dto.theme,
-    logoBright: dto.logo === 'bright',
-    glitch: dto.glitch,
-    camera: {
-      position: [...dto.camera.position],
-      target: [...dto.camera.target],
-    },
+    start: dto.start,
+    end: dto.end,
   };
 }
