@@ -1,80 +1,65 @@
 import { useMemo, useRef } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import type { LineSegments, ShaderMaterial } from 'three';
-import { useSceneValues } from '../sceneValues';
+import { AdditiveBlending, type ShaderMaterial } from 'three';
+import { isCompactDevice, LAYERS } from '../sceneLayout';
+import { useStoryRender } from '../SceneRig';
 
-const AREA = { width: 60, depth: 55, height: 26, centerY: 6, offsetZ: -2 };
-const MOBILE_BREAKPOINT = 720;
-const MAX_OPACITY = 0.35;
+const AREA = { width: 26, depth: 26, height: 16, offsetZ: 2 };
+const DROPS = { compact: 900, full: 1800 };
 
 const vertexShader = /* glsl */ `
   attribute float aEnd;
+  attribute float aRnd;
   uniform float uTime;
-  uniform float uHeight;
-  uniform float uCenterY;
-  varying float vAlpha;
+  varying float vA;
 
   void main() {
     vec3 p = position;
-    p.y = mod(p.y - uTime * 22.0, uHeight) - uHeight * 0.5 + uCenterY;
-    p += vec3(0.12, -0.9, 0.0) * aEnd;
-    vAlpha = 1.0 - aEnd * 0.8;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+    float speed = 9. + aRnd * 5.;
+    p.y = mod(p.y - uTime * speed, 16.) - 2.;
+    p += vec3(.06, -.55, .02) * aEnd;
+    vA = (1. - aEnd) * .5 + .5;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.);
   }
 `;
 
 const fragmentShader = /* glsl */ `
-  uniform float uOpacity;
-  varying float vAlpha;
-
-  void main() {
-    gl_FragColor = vec4(0.78, 0.85, 0.93, vAlpha * uOpacity);
-  }
+  varying float vA;
+  void main() { gl_FragColor = vec4(vec3(.55, .65, .78) * .15 * vA, 1.); }
 `;
 
 /** Each drop is a short line whose two vertices share a position; `aEnd` stretches the tail. */
 function createDrops(count: number) {
   const positions = new Float32Array(count * 6);
   const ends = new Float32Array(count * 2);
+  const seeds = new Float32Array(count * 2);
   for (let i = 0; i < count; i++) {
     const x = (Math.random() - 0.5) * AREA.width;
     const y = Math.random() * AREA.height;
     const z = (Math.random() - 0.5) * AREA.depth + AREA.offsetZ;
+    const seed = Math.random();
     positions.set([x, y, z, x, y, z], i * 6);
     ends.set([0, 1], i * 2);
+    seeds.set([seed, seed], i * 2);
   }
-  return { positions, ends };
+  return { positions, ends, seeds };
 }
 
 export function Rain() {
-  const scene = useSceneValues();
-  const lines = useRef<LineSegments>(null);
   const material = useRef<ShaderMaterial>(null);
-  const isMobile = useThree((state) => state.size.width < MOBILE_BREAKPOINT);
-  const drops = useMemo(() => createDrops(isMobile ? 600 : 1400), [isMobile]);
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uHeight: { value: AREA.height },
-      uCenterY: { value: AREA.centerY },
-      uOpacity: { value: MAX_OPACITY },
-    }),
-    [],
-  );
+  const drops = useMemo(() => createDrops(isCompactDevice() ? DROPS.compact : DROPS.full), []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
-  useFrame(({ clock }) => {
-    if (!lines.current || !material.current) return;
-    const opacity = 1 - scene.current.notebook;
-    material.current.uniforms.uTime.value = clock.elapsedTime;
-    material.current.uniforms.uOpacity.value = MAX_OPACITY * opacity;
-    lines.current.visible = opacity > 0.01;
+  useStoryRender((frame) => {
+    if (material.current)
+      material.current.uniforms.uTime.value = frame.reducedMotion ? 0 : frame.time;
   });
 
   return (
-    <lineSegments ref={lines} frustumCulled={false}>
-      <bufferGeometry key={drops.positions.length}>
+    <lineSegments frustumCulled={false} layers={LAYERS.night}>
+      <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[drops.positions, 3]} />
         <bufferAttribute attach="attributes-aEnd" args={[drops.ends, 1]} />
+        <bufferAttribute attach="attributes-aRnd" args={[drops.seeds, 1]} />
       </bufferGeometry>
       <shaderMaterial
         ref={material}
@@ -83,6 +68,7 @@ export function Rain() {
         fragmentShader={fragmentShader}
         transparent
         depthWrite={false}
+        blending={AdditiveBlending}
       />
     </lineSegments>
   );
