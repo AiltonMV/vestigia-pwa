@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSalasController } from '@/controllers/useSalasController';
 import { Button } from '@/views/components/Button';
@@ -19,9 +20,19 @@ export function SalasPage() {
     sincronizando,
     aviso,
     cerrarAviso,
-    crear,
+    editando,
+    editar,
+    cancelarEdicion,
+    guardar,
+    eliminar,
     recargar,
   } = useSalasController();
+  const formulario = useRef<HTMLElement>(null);
+
+  // En pantallas angostas el formulario queda bajo el listado: se lleva a la vista al editar.
+  useEffect(() => {
+    if (editando) formulario.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [editando]);
 
   return (
     <div className={styles.page}>
@@ -72,15 +83,28 @@ export function SalasPage() {
             <ul className={styles.grid}>
               {salas.map((sala) => (
                 <li key={sala.id}>
-                  <SalaCard sala={sala} />
+                  <SalaCard
+                    sala={sala}
+                    online={online}
+                    editing={editando?.id === sala.id}
+                    onEdit={editar}
+                    onDelete={eliminar}
+                  />
                 </li>
               ))}
             </ul>
           )}
         </section>
 
-        <aside className={styles.form}>
-          <SalaForm onSubmit={crear} guardando={guardando} />
+        <aside ref={formulario} className={styles.form}>
+          {/* La key vuelve a montar el formulario al cambiar de sala, con sus datos iniciales. */}
+          <SalaForm
+            key={editando?.id ?? 'nueva'}
+            sala={editando}
+            onSubmit={guardar}
+            onCancel={editando ? cancelarEdicion : undefined}
+            guardando={guardando}
+          />
         </aside>
       </main>
 
