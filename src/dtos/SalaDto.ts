@@ -7,17 +7,21 @@ export interface SalaDto {
   descripcion: string | null;
   escenario: EscenarioDto;
   activa: boolean;
-  /** ISO sin zona; lo pone el servidor. */
+  /** Hora local sin zona; lo pone el servidor y puede traer microsegundos. */
   creada_en: string;
 }
 
-/** Cuerpo del POST. `creada_en` no se manda: lo pone el servidor. */
-export interface NuevaSalaDto {
-  id: string;
+/** Campos que se pueden escribir: cuerpo del PUT (reemplaza la sala completa). */
+export interface SalaCambiosDto {
   nombre: string;
   descripcion: string | null;
   escenario: EscenarioDto;
   activa: boolean;
+}
+
+/** Cuerpo del POST: el `id` lo genera la PWA. `creada_en` no se manda: lo pone el servidor. */
+export interface NuevaSalaDto extends SalaCambiosDto {
+  id: string;
 }
 
 export interface ApiFieldErrorDto {
