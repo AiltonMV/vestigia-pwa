@@ -1,0 +1,25 @@
+# Reglas para docker/Dockerfile (Docker busca <Dockerfile>.dockerignore junto a él).
+# Las rutas son relativas a la raíz del proyecto, que es el contexto del build.
+
+# Se generan dentro del contenedor
+node_modules
+dist
+
+# Control de versiones y herramientas locales
+.git
+.husky
+.vscode
+.idea
+*.log
+
+# Secretos y configuración local (el build usa sus propios valores)
+.env
+.env.*
+!.env.example
+
+# No hacen falta para compilar
+docs
+README.md
+install.cmd
+docker/*.md
+docker/docker-compose.yml
