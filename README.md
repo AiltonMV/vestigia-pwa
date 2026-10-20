@@ -260,6 +260,17 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 - **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`; los datos se reinician al reiniciar el servidor.
 - **Offline:** el listado se sirve con *stale-while-revalidate* (solo los `GET` se cachean); las altas sin red se guardan en IndexedDB (`vestigia` → `salasPendientes`) con su UUID y se reenvían en orden al volver la conexión (el `POST` es idempotente, no duplica). Al reenviar: 201/200 la confirma, un 400 no se reintenta (se descarta y se avisa) y un 500 la deja en la cola para el siguiente intento.
 
+### Ejecución con Docker
+
+La PWA también se puede levantar en un contenedor (Node compila y Nginx sirve los archivos, con `/api` reenviado al backend). Con Docker Desktop abierto, desde la raíz del proyecto:
+
+```bash
+docker compose -f docker/docker-compose.yml up -d --build   # construir y levantar
+docker compose -f docker/docker-compose.yml down            # detener y borrar el contenedor
+```
+
+Abre http://localhost:4173. Archivos, variables y problemas comunes: [docker/README.md](docker/README.md).
+
 ## 9. Flujo de trabajo en Git
 
 ### Ramas
