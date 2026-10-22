@@ -1,0 +1,22 @@
+# Levanta la PWA en un contenedor. Desde esta carpeta: docker compose up -d --build
+# (desde la raíz del proyecto: docker compose -f docker/docker-compose.yml up -d --build)
+# Abre http://localhost:4173 (puerto que el backend ya permite en CORS).
+services:
+  pwa:
+    build:
+      # El contexto es la raíz del proyecto: ahí están package.json, src/ y public/.
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        VITE_API_URL: ''
+    image: vestigia-pwa:latest
+    container_name: vestigia-pwa
+    ports:
+      - '4173:80'
+    environment:
+      # Backend de Spring Boot corriendo en tu equipo (fuera de Docker).
+      API_UPSTREAM: http://host.docker.internal:8080
+    extra_hosts:
+      # Necesario en Linux; en Docker Desktop (Windows/Mac) ya existe.
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
