@@ -311,3 +311,5 @@ El título lleva el prefijo del tipo de cambio. La descripción indica qué hace
 ## Documentación del laboratorio
 
 [Consultar instrucciones, reporte y evidencias](docs/laboratorio/README.md)
+
+## Se hace prueba de docket
