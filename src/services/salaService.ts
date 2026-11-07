@@ -7,7 +7,8 @@ import {
   type PendingSalaRepository,
 } from '@/repositories/pendingSalaRepository';
 import { httpSalaRepository, type SalaRepository } from '@/repositories/salaRepository';
-import { tieneErrores, validarNuevaSala } from './salaValidation';
+import { validarNuevaSala } from './salaValidation';
+import { tieneErrores } from './validation';
 import { createUuid } from './uuid';
 
 /** La sala no pasó la validación (del cliente o un 400 del servidor). */

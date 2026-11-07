@@ -7,11 +7,12 @@ import {
   type NuevaSala,
   type Sala,
 } from '@/models/Sala';
-import { tieneErrores, validarNuevaSala } from '@/services/salaValidation';
+import { validarNuevaSala } from '@/services/salaValidation';
+import { tieneErrores } from '@/services/validation';
 import { Button } from './Button';
 import { fieldA11y } from '@/views/utils/fieldA11y';
 import { FormField } from './FormField';
-import styles from './SalaForm.module.css';
+import styles from './FormPanel.module.css';
 
 const VACIA: NuevaSala = { nombre: '', descripcion: '', escenario: '', activa: true };
 
