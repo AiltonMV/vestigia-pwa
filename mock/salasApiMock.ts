@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { Connect, Plugin } from 'vite';
+import { mockPlugin, now, readBody, send, sendError as sendErrorAt } from './mockHttp.ts';
 
 /**
  * In-memory `/api/salas` that follows the backend contract (idempotent POST, 400 with
@@ -48,25 +48,8 @@ const salas: Sala[] = [
   },
 ];
 
-const now = () => new Date().toISOString().slice(0, 19);
-
-function send(res: ServerResponse, status: number, body?: unknown) {
-  res.statusCode = status;
-  if (body === undefined) return res.end();
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(body));
-}
-
-function sendError(res: ServerResponse, status: number, message: string, details?: unknown[]) {
-  const error = { 400: 'Bad Request', 404: 'Not Found' }[status] ?? 'Internal Server Error';
-  send(res, status, { timestamp: now(), status, error, message, path: BASE, details });
-}
-
-async function readBody(req: IncomingMessage): Promise<unknown> {
-  let raw = '';
-  for await (const chunk of req) raw += chunk;
-  return JSON.parse(raw);
-}
+const sendError = (res: ServerResponse, status: number, message: string, details?: unknown[]) =>
+  sendErrorAt(res, BASE, status, message, details);
 
 function validate(body: Partial<Sala>) {
   const details: { field: string; message: string }[] = [];
@@ -140,17 +123,4 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
   return sendError(res, 404, 'Sala no encontrada');
 }
 
-const middleware: Connect.NextHandleFunction = (req, res, next) => {
-  if (!req.url?.startsWith(BASE)) return next();
-  // Small delay so loading states and network timings are visible.
-  setTimeout(() => void handle(req, res).catch(() => sendError(res, 500, 'Error del mock')), 250);
-};
-
-/** Serves the mock in `vite` (dev) and `vite preview`, so the Service Worker can be tested too. */
-export function salasApiMock(): Plugin {
-  return {
-    name: 'vestigia-salas-api-mock',
-    configureServer: (server) => void server.middlewares.use(middleware),
-    configurePreviewServer: (server) => void server.middlewares.use(middleware),
-  };
-}
+export const salasApiMock = () => mockPlugin('vestigia-salas-api-mock', BASE, handle);
