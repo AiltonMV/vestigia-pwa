@@ -1,0 +1,37 @@
+.list {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+}
+
+.count {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgb(255 204 0 / 0.15);
+  color: var(--color-yellow);
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}

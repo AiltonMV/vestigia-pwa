@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import type { ErroresDeCampo, NuevaSala, Sala } from '@/models/Sala';
+import type { Aviso, EstadoCarga } from '@/models/Vista';
 import { NetworkError } from '@/repositories/http/httpClient';
 import {
   SalaInvalidaError,
@@ -8,13 +9,6 @@ import {
   salaService,
   type SalaService,
 } from '@/services/salaService';
-
-export type EstadoCarga = 'cargando' | 'listo' | 'error';
-
-export interface Aviso {
-  tono: 'info' | 'exito' | 'error';
-  texto: string;
-}
 
 /** Cambia cada sala de `actuales` por su versión en `nuevas` (mismo `id`) sin moverla. */
 function reemplazar(actuales: Sala[], nuevas: Sala[]): Sala[] {

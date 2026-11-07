@@ -1,5 +1,5 @@
 import { API_URL } from '@/config/apiConfig';
-import type { ApiErrorDto, ApiFieldErrorDto } from '@/dtos/SalaDto';
+import type { ApiErrorDto, ApiFieldErrorDto } from '@/dtos/ApiErrorDto';
 
 /** El servidor respondió con un error (400, 404, 500…). */
 export class ApiError extends Error {

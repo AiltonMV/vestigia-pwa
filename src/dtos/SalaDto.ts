@@ -23,18 +23,3 @@ export interface SalaCambiosDto {
 export interface NuevaSalaDto extends SalaCambiosDto {
   id: string;
 }
-
-export interface ApiFieldErrorDto {
-  field: string;
-  message: string;
-}
-
-/** Cuerpo uniforme de error del backend. */
-export interface ApiErrorDto {
-  timestamp: string;
-  status: number;
-  error: string;
-  message: string;
-  path: string;
-  details?: ApiFieldErrorDto[];
-}

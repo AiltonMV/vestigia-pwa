@@ -11,5 +11,3 @@ export function validarNuevaSala(sala: NuevaSala): ErroresDeCampo {
   }
   return errores;
 }
-
-export const tieneErrores = (errores: ErroresDeCampo) => Object.keys(errores).length > 0;
