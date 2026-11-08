@@ -1,0 +1,51 @@
+/* Layers: glow → phone → fade → chapter text → top bar, rail. Night palette, like the landing's start. */
+.page {
+  --ink: var(--color-ivory);
+  --ink-soft: rgb(255 252 244 / 0.62);
+  --rule: rgb(255 252 244 / 0.22);
+  --accent: var(--color-yellow);
+  position: relative;
+  color: var(--ink);
+  background: var(--color-navy);
+}
+
+/* Lamp-like light behind the phone. */
+.glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 42%, rgb(255 204 0 / 0.1), transparent 70%),
+    radial-gradient(ellipse at top, rgb(38 58 73 / 0.6), transparent 65%);
+  pointer-events: none;
+}
+
+.fade {
+  display: none;
+}
+
+.chapters {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  z-index: -1;
+  height: 900vh;
+}
+
+/* Phones: the text sits over the bottom of the screen, so it gets a dark backing. */
+@media (max-width: 720px) {
+  .fade {
+    display: block;
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 2;
+    height: 52svh;
+    background: linear-gradient(transparent, var(--color-navy) 38%);
+    pointer-events: none;
+  }
+}
