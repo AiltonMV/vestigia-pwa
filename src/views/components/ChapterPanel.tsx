@@ -7,6 +7,8 @@ import { Button } from './Button';
 import { RevealText } from './RevealText';
 import styles from './ChapterPanel.module.css';
 
+const isRoute = (href: string) => href.startsWith('/');
+
 interface ChapterPanelProps {
   clock: StoryClock;
   /** Scroll story range the chapter is on screen. */
@@ -47,7 +49,8 @@ export function ChapterPanel({
       {body && <RevealText className={styles.body} text={body} />}
       {cta && (
         <Button
-          href={cta.href}
+          // A path inside the app ("/libreta") navigates without reloading the page.
+          {...(isRoute(cta.href) ? { to: cta.href } : { href: cta.href })}
           icon={<ArrowIcon />}
           className={styles.cta}
           {...{ [REVEAL.extra]: '' }}

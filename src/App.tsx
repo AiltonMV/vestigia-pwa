@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { ScrollToTop } from '@/views/components/ScrollToTop';
 
 // Each page is its own chunk: the rooms page doesn't download the 3D landing.
 const LandingPage = lazy(() =>
@@ -15,6 +16,7 @@ const UsuariosPage = lazy(() =>
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
