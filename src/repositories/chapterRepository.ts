@@ -5,6 +5,10 @@ export interface ChapterRepository {
   findAll(): Promise<ChapterDto[]>;
 }
 
-export const localChapterRepository: ChapterRepository = {
-  findAll: () => Promise.resolve(CHAPTERS),
-};
+/** Chapters that ship with the app (no backend): one repository per story. */
+export function createLocalChapterRepository(chapters: ChapterDto[]): ChapterRepository {
+  return { findAll: () => Promise.resolve(chapters) };
+}
+
+/** The landing's story. */
+export const localChapterRepository = createLocalChapterRepository(CHAPTERS);
