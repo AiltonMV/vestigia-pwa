@@ -1,0 +1,37 @@
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgb(255 252 244 / 0.12);
+  border-radius: 999px;
+  background: rgb(0 15 32 / 0.6);
+}
+
+.option {
+  flex: 1;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--color-mist);
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.option:hover,
+.option:focus-visible {
+  color: var(--color-ivory);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--color-yellow);
+  outline-offset: 1px;
+}
+
+.selected {
+  background: rgb(255 204 0 / 0.16);
+  color: var(--color-yellow);
+}

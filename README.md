@@ -252,13 +252,13 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 
 > El Service Worker solo se activa en el build de producción (`preview`) o en `localhost`.
 
-### Salas (laboratorio)
+### Salas (catálogo de pueblos)
 
 - **Entrada:** en la página principal, código Konami (↑ ↑ ↓ ↓ ← → ← → B A); en teléfono, 5 toques seguidos al logo «V / Vestigia». También se abre directo en `/salas`.
-- **Con el backend real** (monorepo `Vestigia`, carpeta `backend/vestigia`; pasos en su `docs/README.md`): `VITE_API_URL=http://localhost:8080` y `VITE_API_MOCK=false` en `.env`. La PWA debe correr en el puerto 5173 (`dev`) o 4173 (`preview`): otro puerto lo bloquea CORS.
-- **Operaciones:** listado y alta (también sin conexión), edición (`PUT`) y borrado con confirmación (`DELETE`). Editar y borrar necesitan conexión, salvo borrar una sala pendiente, que solo se quita de la cola local.
-- **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`; los datos se reinician al reiniciar el servidor.
-- **Offline:** el listado se sirve con *stale-while-revalidate* (solo los `GET` se cachean); las altas sin red se guardan en IndexedDB (`vestigia` → `salasPendientes`) con su UUID y se reenvían en orden al volver la conexión (el `POST` es idempotente, no duplica). Al reenviar: 201/200 la confirma, un 400 no se reintenta (se descarta y se avisa) y un 500 la deja en la cola para el siguiente intento.
+- **Qué muestra:** el catálogo de pueblos del backend (`GET /api/v1/pueblos`, ruta pública sin token). Cada pueblo es el código de una sala: ocupado = hay una partida en curso. Se puede filtrar por libres o en partida. La PWA **no** crea, edita ni borra salas: eso lo hacen el juego y la app (guía `docs/integracion-pwa.md` del repo `vestigia-backend`).
+- **Con el backend real** (repo `vestigia-backend`): `VITE_API_URL=http://localhost:8080` y `VITE_API_MOCK=false` en `.env`, o `VITE_API_URL` vacío para usar el proxy de `vite dev`. La PWA debe correr en el puerto 5173 (`dev`) o 4173 (`preview`): otro puerto lo bloquea CORS. Para publicarla, el origen exacto (sin `/` final) se agrega a `CORS_ALLOWED_ORIGINS` del backend.
+- **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`.
+- **Offline:** el catálogo se cachea con *network-first* (espera 5 s a la red y, sin respuesta, muestra la última copia). Cada petición tiene un límite de 10 s y se cancela al salir de la página.
 
 ### Ejecución con Docker
 

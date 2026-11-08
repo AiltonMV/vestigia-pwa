@@ -2,7 +2,8 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
-import { salasApiMock } from './mock/salasApiMock.ts';
+import { pueblosApiMock } from './mock/pueblosApiMock.ts';
+import { usuariosApiMock } from './mock/usuariosApiMock.ts';
 
 const NAVY = '#000F20';
 
@@ -13,7 +14,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      useMock && salasApiMock(),
+      useMock && pueblosApiMock(),
+      useMock && usuariosApiMock(),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['fonts/*.woff2', 'icons/apple-touch-icon.png'],
@@ -46,13 +48,15 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           runtimeCaching: [
             {
-              // Room list: show the last copy right away (also offline) and refresh it behind.
+              // Town catalog: `libre` changes as soon as a game opens or closes a room, so the
+              // network wins; the cached copy is only for when there is no answer in 5 s.
               urlPattern: ({ url, request }) =>
-                request.method === 'GET' && url.pathname.startsWith('/api/salas'),
-              handler: 'StaleWhileRevalidate',
+                request.method === 'GET' && url.pathname.startsWith('/api/v1/pueblos'),
+              handler: 'NetworkFirst',
               options: {
-                cacheName: 'api-salas',
-                cacheableResponse: { statuses: [0, 200] },
+                cacheName: 'api-pueblos',
+                networkTimeoutSeconds: 5,
+                cacheableResponse: { statuses: [200] },
               },
             },
           ],

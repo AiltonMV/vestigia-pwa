@@ -5,8 +5,11 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 const LandingPage = lazy(() =>
   import('@/views/pages/LandingPage').then((module) => ({ default: module.LandingPage })),
 );
-const SalasPage = lazy(() =>
-  import('@/views/pages/SalasPage').then((module) => ({ default: module.SalasPage })),
+const PueblosPage = lazy(() =>
+  import('@/views/pages/PueblosPage').then((module) => ({ default: module.PueblosPage })),
+);
+const UsuariosPage = lazy(() =>
+  import('@/views/pages/UsuariosPage').then((module) => ({ default: module.UsuariosPage })),
 );
 
 function App() {
@@ -15,7 +18,8 @@ function App() {
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/salas" element={<SalasPage />} />
+          <Route path="/salas" element={<PueblosPage />} />
+          <Route path="/usuarios" element={<UsuariosPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
