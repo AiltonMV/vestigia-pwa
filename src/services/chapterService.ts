@@ -1,6 +1,10 @@
 import { toChapter } from '@/dtos/chapterMapper';
 import type { Chapter } from '@/models/Chapter';
-import { localChapterRepository, type ChapterRepository } from '@/repositories/chapterRepository';
+import {
+  libretaChapterRepository,
+  localChapterRepository,
+  type ChapterRepository,
+} from '@/repositories/chapterRepository';
 
 export interface ChapterService {
   getChapters(): Promise<Chapter[]>;
@@ -16,3 +20,5 @@ export function createChapterService(repository: ChapterRepository): ChapterServ
 }
 
 export const chapterService = createChapterService(localChapterRepository);
+
+export const libretaChapterService = createChapterService(libretaChapterRepository);

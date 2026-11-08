@@ -1,5 +1,6 @@
 import type { ChapterDto } from '@/dtos/ChapterDto';
 import { CHAPTERS } from './data/chapters';
+import { LIBRETA_CHAPTERS } from './data/libretaChapters';
 
 export interface ChapterRepository {
   findAll(): Promise<ChapterDto[]>;
@@ -12,3 +13,6 @@ export function createLocalChapterRepository(chapters: ChapterDto[]): ChapterRep
 
 /** The landing's story. */
 export const localChapterRepository = createLocalChapterRepository(CHAPTERS);
+
+/** How the phone app works (/libreta). */
+export const libretaChapterRepository = createLocalChapterRepository(LIBRETA_CHAPTERS);
