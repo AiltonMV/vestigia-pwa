@@ -1,0 +1,41 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border: 1px solid rgb(255 252 244 / 0.12);
+  border-radius: 14px;
+  background: rgb(38 58 73 / 0.35);
+}
+
+.busy {
+  border-color: rgb(255 204 0 / 0.45);
+}
+
+.name {
+  margin: 0;
+  font: 500 var(--step-0) / 1.2 var(--font-sans);
+  letter-spacing: 0.14em;
+  color: var(--color-ivory);
+  overflow-wrap: anywhere;
+}
+
+.state {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.free {
+  background: rgb(111 207 143 / 0.16);
+  color: #6fcf8f;
+}
+
+.inGame {
+  background: rgb(255 204 0 / 0.16);
+  color: var(--color-yellow);
+}
