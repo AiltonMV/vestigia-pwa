@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Connect, Plugin } from 'vite';
 
-/** Shared helpers for the in-memory API mocks (see `salasApiMock.ts`, `usuariosApiMock.ts`). */
+/** Shared helpers for the in-memory API mocks (see `pueblosApiMock.ts`, `usuariosApiMock.ts`). */
 
 export const now = () => new Date().toISOString().slice(0, 19);
 
@@ -23,7 +23,7 @@ export function sendError(
   details: unknown[] = [],
 ) {
   const error = REASON[status] ?? 'Internal Server Error';
-  send(res, status, { timestamp: now(), status, error, message, path, details });
+  send(res, status, { timestamp: now(), status, error, codigo: null, message, path, details });
 }
 
 export async function readBody(req: IncomingMessage): Promise<unknown> {

@@ -8,7 +8,7 @@ interface ImportMetaEnv {
   readonly VITE_USE_EMULATORS: string;
   /** Backend base URL, e.g. http://localhost:8080. Empty = same origin. */
   readonly VITE_API_URL?: string;
-  /** `true` serves the in-memory APIs in mock/ (salas, usuarios) from Vite. */
+  /** `true` serves the in-memory APIs in mock/ (pueblos, usuarios) from Vite. */
   readonly VITE_API_MOCK?: string;
 }
 interface ImportMeta {
