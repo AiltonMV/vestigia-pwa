@@ -5,7 +5,14 @@ import type { Connect, Plugin } from 'vite';
 
 export const now = () => new Date().toISOString().slice(0, 19);
 
-const REASON: Record<number, string> = { 400: 'Bad Request', 404: 'Not Found', 409: 'Conflict' };
+const REASON: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  409: 'Conflict',
+  429: 'Too Many Requests',
+};
 
 export function send(res: ServerResponse, status: number, body?: unknown) {
   res.statusCode = status;
@@ -21,9 +28,10 @@ export function sendError(
   status: number,
   message: string,
   details: unknown[] = [],
+  codigo: string | null = null,
 ) {
   const error = REASON[status] ?? 'Internal Server Error';
-  send(res, status, { timestamp: now(), status, error, codigo: null, message, path, details });
+  send(res, status, { timestamp: now(), status, error, codigo, message, path, details });
 }
 
 export async function readBody(req: IncomingMessage): Promise<unknown> {
