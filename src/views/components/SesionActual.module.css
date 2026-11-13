@@ -3,11 +3,37 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+
+.inicial {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgb(255 204 0 / 0.16);
+  color: var(--color-yellow);
+  font: 600 var(--step-0) / 1 var(--font-sans);
+  text-transform: uppercase;
+}
+
+.datos {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
 }
 
 .nombre {
   font: 500 var(--step-0) / 1.2 var(--font-serif);
   color: var(--color-ivory);
+  overflow-wrap: anywhere;
+}
+
+.correo {
+  font: 500 var(--step--1) / 1.2 var(--font-sans);
+  color: var(--color-mist);
   overflow-wrap: anywhere;
 }
 
