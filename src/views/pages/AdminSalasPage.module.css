@@ -1,0 +1,17 @@
+.page {
+  display: grid;
+  gap: 24px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.toolbar button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

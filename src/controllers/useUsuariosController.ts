@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
-import type { RedireccionLogin } from '@/models/Sesion';
+import { useVolverAlLogin } from '@/hooks/useVolverAlLogin';
 import type { ErroresDeUsuario, NuevoUsuario, Usuario } from '@/models/Usuario';
 import type { Aviso, EstadoCarga } from '@/models/Vista';
 import { NetworkError } from '@/repositories/http/httpClient';
@@ -27,20 +25,12 @@ function mensajeDeCarga(error: unknown): string {
 }
 
 export function useUsuariosController(service: UsuarioService = usuarioService) {
-  const online = useOnlineStatus();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const volverAlLogin = useVolverAlLogin();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [estado, setEstado] = useState<EstadoCarga>('cargando');
   const [errorCarga, setErrorCarga] = useState<string>();
   const [aviso, setAviso] = useState<Aviso>();
   const [guardando, setGuardando] = useState(false);
-
-  /** La sesión venció o el backend ya no acepta el token: de vuelta a /login. */
-  const volverAlLogin = useCallback(() => {
-    const state: RedireccionLogin = { desde: pathname, vencida: true };
-    navigate('/login', { replace: true, state });
-  }, [navigate, pathname]);
 
   const cargar = useCallback(
     () =>
@@ -91,7 +81,6 @@ export function useUsuariosController(service: UsuarioService = usuarioService) 
     usuarios,
     estado,
     errorCarga,
-    online,
     guardando,
     aviso,
     cerrarAviso: () => setAviso(undefined),
