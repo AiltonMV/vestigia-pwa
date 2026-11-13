@@ -109,7 +109,7 @@ export const CHAPTERS: ChapterDto[] = [
     highlight: null,
     footnote: 'Juega en PC · Tu teléfono es la libreta',
     hint: null,
-    cta: { label: 'Abrir la libreta', href: '#' },
+    cta: { label: 'Abrir la libreta', href: '/libreta' },
     align: 'center',
     start: 0.875,
     end: 1.05,

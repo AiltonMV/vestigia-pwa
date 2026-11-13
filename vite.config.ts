@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { pueblosApiMock } from './mock/pueblosApiMock.ts';
-import { usuariosApiMock } from './mock/usuariosApiMock.ts';
+import { authApiMock, usuariosApiMock } from './mock/usuariosApiMock.ts';
 
 const NAVY = '#000F20';
 
@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       useMock && pueblosApiMock(),
+      useMock && authApiMock(),
       useMock && usuariosApiMock(),
       VitePWA({
         registerType: 'autoUpdate',

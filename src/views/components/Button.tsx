@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { cx } from '@/views/utils/cx';
 import styles from './Button.module.css';
 
@@ -8,12 +9,18 @@ interface BaseProps {
   className?: string;
 }
 
-type LinkProps = BaseProps & AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
-type NativeButtonProps = BaseProps & ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
+type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 
-export type ButtonProps = LinkProps | NativeButtonProps;
+/** Route inside the app (React Router, no page reload). */
+type RouteProps = BaseProps & AnchorProps & { to: string; href?: never };
+/** Any other URL. */
+type LinkProps = BaseProps & AnchorProps & { href: string; to?: never };
+type NativeButtonProps = BaseProps &
+  ButtonHTMLAttributes<HTMLButtonElement> & { href?: never; to?: never };
 
-/** Primary action. Renders a link when given `href`, otherwise a button. */
+export type ButtonProps = RouteProps | LinkProps | NativeButtonProps;
+
+/** Primary action. Renders a route link with `to`, a link with `href`, otherwise a button. */
 export function Button({ children, icon, className, ...props }: ButtonProps) {
   const content = (
     <>
@@ -27,9 +34,17 @@ export function Button({ children, icon, className, ...props }: ButtonProps) {
   );
   const classes = cx(styles.button, className);
 
+  if (props.to !== undefined) {
+    const { to, ...rest } = props as RouteProps;
+    return (
+      <Link className={classes} to={to} {...rest}>
+        {content}
+      </Link>
+    );
+  }
   if (props.href !== undefined) {
     return (
-      <a className={classes} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}>
+      <a className={classes} {...(props as LinkProps)}>
         {content}
       </a>
     );

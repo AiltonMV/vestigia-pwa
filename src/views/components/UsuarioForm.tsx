@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import {
-  ROL_LABEL,
-  ROLES,
   USUARIO_CORREO_MAX,
   USUARIO_NOMBRE_MAX,
+  USUARIO_PASSWORD_MAX,
+  USUARIO_PASSWORD_MIN,
   type ErroresDeUsuario,
   type NuevoUsuario,
 } from '@/models/Usuario';
@@ -14,7 +14,7 @@ import { Button } from './Button';
 import { FormField } from './FormField';
 import styles from './FormPanel.module.css';
 
-const VACIO: NuevoUsuario = { nombre: '', correo: '', rol: '' };
+const VACIO: NuevoUsuario = { nombre: '', correo: '', password: '' };
 
 interface UsuarioFormProps {
   /** Devuelve los errores por campo, o `null` si se guardó. */
@@ -22,7 +22,7 @@ interface UsuarioFormProps {
   guardando: boolean;
 }
 
-/** Alta de un usuario: valida en el cliente y muestra junto a cada campo los errores del servidor. */
+/** Alta de un administrador: valida en el cliente y muestra junto a cada campo los errores del servidor. */
 export function UsuarioForm({ onSubmit, guardando }: UsuarioFormProps) {
   const [datos, setDatos] = useState<NuevoUsuario>(VACIO);
   const [errores, setErrores] = useState<ErroresDeUsuario>({});
@@ -48,7 +48,7 @@ export function UsuarioForm({ onSubmit, guardando }: UsuarioFormProps) {
 
   return (
     <form className={styles.form} onSubmit={enviar} noValidate>
-      <h2 className={styles.title}>Nuevo usuario</h2>
+      <h2 className={styles.title}>Nuevo administrador</h2>
 
       <FormField label="Nombre" htmlFor="usuario-nombre" error={errores.nombre}>
         <input
@@ -73,21 +73,20 @@ export function UsuarioForm({ onSubmit, guardando }: UsuarioFormProps) {
         />
       </FormField>
 
-      <FormField label="Rol" htmlFor="usuario-rol" error={errores.rol}>
-        <select
-          {...fieldA11y('usuario-rol', errores.rol)}
-          value={datos.rol}
-          onChange={(event) => cambiar('rol', event.target.value as NuevoUsuario['rol'])}
-        >
-          <option value="" disabled>
-            Elige uno…
-          </option>
-          {ROLES.map((rol) => (
-            <option key={rol} value={rol}>
-              {ROL_LABEL[rol]}
-            </option>
-          ))}
-        </select>
+      <FormField
+        label="Contraseña"
+        htmlFor="usuario-password"
+        error={errores.password}
+        hint={`De ${USUARIO_PASSWORD_MIN} a ${USUARIO_PASSWORD_MAX} caracteres. Pásasela a la persona: no se puede volver a consultar.`}
+      >
+        <input
+          type="password"
+          {...fieldA11y('usuario-password', errores.password)}
+          value={datos.password}
+          maxLength={USUARIO_PASSWORD_MAX}
+          autoComplete="new-password"
+          onChange={(event) => cambiar('password', event.target.value)}
+        />
       </FormField>
 
       <div className={styles.actions}>

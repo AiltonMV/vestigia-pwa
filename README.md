@@ -260,6 +260,13 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 - **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`.
 - **Offline:** el catálogo se cachea con *network-first* (espera 5 s a la red y, sin respuesta, muestra la última copia). Cada petición tiene un límite de 10 s y se cancela al salir de la página.
 
+### Usuarios (administración)
+
+- **Entrada:** `/usuarios`. Sin sesión manda a `/login` y, al entrar, regresa.
+- **Sesión:** `POST /api/v1/auth/login` con correo y contraseña. El token se guarda en `sessionStorage` (sobrevive a recargar, se pierde al cerrar la pestaña), dura 8 horas y va como `Authorization: Bearer` en cada petición. Un `401` borra la sesión y regresa a `/login`; «Cerrar sesión» llama a `POST /api/v1/auth/logout`.
+- **Qué hace:** lista (`GET /api/v1/admin/usuarios`) y da de alta administradores (`POST`, con contraseña de 8 a 72 caracteres). Editar y eliminar existen en el backend pero la PWA todavía no los usa. Contrato completo: `docs/api.md`, sección «Sesión y administración», del repo `vestigia-backend`.
+- **Sin backend:** con `VITE_API_MOCK=true`, entra con `admin@vestigia.site` / `vestigia-admin`. Los datos y las sesiones se reinician al reiniciar Vite.
+
 ### Ejecución con Docker
 
 La PWA también se puede levantar en un contenedor (Node compila y Nginx sirve los archivos, con `/api` reenviado al backend). Con Docker Desktop abierto, desde la raíz del proyecto:

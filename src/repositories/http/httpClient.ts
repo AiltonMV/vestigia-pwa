@@ -70,6 +70,9 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
   return { status: response.status, data: body as T };
 }
 
+/** Encabezado de las rutas con sesión de administrador (el token de `POST /auth/login`). */
+export const bearer = (token: string) => ({ Authorization: `Bearer ${token}` });
+
 /** `true` si el error viene de cancelar la petición a propósito. */
 export const isAbort = (error: unknown) =>
   error instanceof DOMException && error.name === 'AbortError';
