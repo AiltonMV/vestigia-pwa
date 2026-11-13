@@ -8,7 +8,7 @@ interface LabLayoutProps {
   /** A la derecha del título, p. ej. el estado de conexión. */
   status?: ReactNode;
   /** Columna lateral (el formulario); en pantallas angostas queda debajo del listado. */
-  aside: ReactNode;
+  aside?: ReactNode;
   asideRef?: Ref<HTMLElement>;
   /** Aviso flotante. */
   notice?: ReactNode;
@@ -41,9 +41,11 @@ export function LabLayout({
 
       <main className={styles.layout}>
         {children}
-        <aside ref={asideRef} className={styles.form}>
-          {aside}
-        </aside>
+        {aside && (
+          <aside ref={asideRef} className={styles.form}>
+            {aside}
+          </aside>
+        )}
       </main>
 
       {notice}

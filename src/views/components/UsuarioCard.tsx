@@ -13,6 +13,7 @@ export function UsuarioCard({ usuario }: UsuarioCardProps) {
     <article className={styles.card}>
       <header className={styles.header}>
         <span className={cx(styles.tag, styles[usuario.rol])}>{ROL_LABEL[usuario.rol]}</span>
+        {!usuario.activo && <span className={cx(styles.tag, styles.inactivo)}>Inactivo</span>}
       </header>
       <h3 className={styles.name}>{usuario.nombre}</h3>
       <p className={styles.email}>{usuario.correo}</p>

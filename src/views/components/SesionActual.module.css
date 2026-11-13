@@ -1,0 +1,35 @@
+.sesion {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.nombre {
+  font: 500 var(--step-0) / 1.2 var(--font-serif);
+  color: var(--color-ivory);
+  overflow-wrap: anywhere;
+}
+
+.salir {
+  padding: 6px 12px;
+  border: 1px solid rgb(255 252 244 / 0.18);
+  border-radius: 999px;
+  background: none;
+  color: var(--color-mist);
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.salir:hover,
+.salir:focus-visible {
+  border-color: var(--color-yellow);
+  color: var(--color-yellow);
+}
+
+.salir:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

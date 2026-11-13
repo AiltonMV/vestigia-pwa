@@ -10,7 +10,7 @@
   color: var(--color-mist);
 }
 
-.field :is(input[type='text'], input[type='email'], textarea, select) {
+.field :is(input[type='text'], input[type='email'], input[type='password'], textarea, select) {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid rgb(255 252 244 / 0.18);
