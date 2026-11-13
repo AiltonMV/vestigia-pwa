@@ -12,6 +12,7 @@ import { tieneErrores } from '@/services/validation';
 import { fieldA11y } from '@/views/utils/fieldA11y';
 import { Button } from './Button';
 import { FormField } from './FormField';
+import { PasswordInput } from './PasswordInput';
 import styles from './FormPanel.module.css';
 
 const VACIO: NuevoUsuario = { nombre: '', correo: '', password: '' };
@@ -79,8 +80,7 @@ export function UsuarioForm({ onSubmit, guardando }: UsuarioFormProps) {
         error={errores.password}
         hint={`De ${USUARIO_PASSWORD_MIN} a ${USUARIO_PASSWORD_MAX} caracteres. Pásasela a la persona: no se puede volver a consultar.`}
       >
-        <input
-          type="password"
+        <PasswordInput
           {...fieldA11y('usuario-password', errores.password)}
           value={datos.password}
           maxLength={USUARIO_PASSWORD_MAX}

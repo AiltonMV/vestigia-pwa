@@ -1,5 +1,6 @@
 import type { ReactNode, Ref } from 'react';
 import { Link } from 'react-router-dom';
+import { SplitLayout } from './SplitLayout';
 import styles from './LabLayout.module.css';
 
 interface LabLayoutProps {
@@ -39,13 +40,10 @@ export function LabLayout({
         {status}
       </header>
 
-      <main className={styles.layout}>
-        {children}
-        {aside && (
-          <aside ref={asideRef} className={styles.form}>
-            {aside}
-          </aside>
-        )}
+      <main>
+        <SplitLayout aside={aside} asideRef={asideRef}>
+          {children}
+        </SplitLayout>
       </main>
 
       {notice}
