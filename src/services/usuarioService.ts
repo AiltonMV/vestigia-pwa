@@ -1,7 +1,8 @@
 import { toNuevoUsuarioDto, toUsuario } from '@/dtos/usuarioMapper';
-import type { ErroresDeUsuario, NuevoUsuario, Rol, Usuario } from '@/models/Usuario';
+import type { ErroresDeUsuario, NuevoUsuario, Usuario } from '@/models/Usuario';
 import { ApiError } from '@/repositories/http/httpClient';
 import { httpUsuarioRepository, type UsuarioRepository } from '@/repositories/usuarioRepository';
+import { sesionService, type SesionService } from './sesionService';
 import { validarNuevoUsuario } from './usuarioValidation';
 import { tieneErrores } from './validation';
 
@@ -16,13 +17,14 @@ export class UsuarioInvalidoError extends Error {
   }
 }
 
+/** Requiere una sesión de administrador; sin ella lanza `SesionVencidaError`. */
 export interface UsuarioService {
   getUsuarios(): Promise<Usuario[]>;
-  /** Da de alta al usuario. Requiere conexión. */
+  /** Da de alta a un administrador. Requiere conexión. */
   createUsuario(datos: NuevoUsuario): Promise<Usuario>;
 }
 
-const CAMPOS = new Set<string>(['nombre', 'correo', 'rol']);
+const CAMPOS = new Set<string>(['nombre', 'correo', 'password']);
 
 function camposDelServidor(error: ApiError): ErroresDeUsuario {
   const campos: ErroresDeUsuario = {};
@@ -37,7 +39,7 @@ function errorDeAlta(error: unknown): unknown {
   if (error instanceof ApiError && error.status === 400) {
     return new UsuarioInvalidoError(camposDelServidor(error), error.message);
   }
-  if (error instanceof ApiError && error.status === 409) {
+  if (error instanceof ApiError && error.codigo === 'correo_duplicado') {
     return new UsuarioInvalidoError(
       { correo: 'Ya hay un usuario con este correo.' },
       error.message,
@@ -46,18 +48,21 @@ function errorDeAlta(error: unknown): unknown {
   return error;
 }
 
-export function createUsuarioService(usuarios: UsuarioRepository): UsuarioService {
+export function createUsuarioService(
+  usuarios: UsuarioRepository,
+  sesion: SesionService,
+): UsuarioService {
   return {
     async getUsuarios() {
-      return (await usuarios.findAll()).map(toUsuario);
+      return (await sesion.conToken((token) => usuarios.findAll(token))).map(toUsuario);
     },
 
     async createUsuario(datos) {
       const errores = validarNuevoUsuario(datos);
       if (tieneErrores(errores)) throw new UsuarioInvalidoError(errores);
-      const dto = toNuevoUsuarioDto({ ...datos, rol: datos.rol as Rol });
+      const dto = toNuevoUsuarioDto(datos);
       try {
-        return toUsuario(await usuarios.create(dto));
+        return toUsuario(await sesion.conToken((token) => usuarios.create(dto, token)));
       } catch (error) {
         throw errorDeAlta(error);
       }
@@ -65,4 +70,4 @@ export function createUsuarioService(usuarios: UsuarioRepository): UsuarioServic
   };
 }
 
-export const usuarioService = createUsuarioService(httpUsuarioRepository);
+export const usuarioService = createUsuarioService(httpUsuarioRepository, sesionService);
