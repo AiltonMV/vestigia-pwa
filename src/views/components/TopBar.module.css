@@ -28,6 +28,17 @@
   margin: 0 0.9em;
 }
 
+.end {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* The bar lets clicks through to the scene; only its controls take them. */
+.action {
+  pointer-events: auto;
+}
+
 .counter {
   font-weight: 500;
   color: var(--ink-soft);

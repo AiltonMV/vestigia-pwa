@@ -1,6 +1,8 @@
 import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import { useLandingController } from '@/controllers/useLandingController';
+import { useSesionController } from '@/controllers/useSesionController';
 import { useInkTheme } from '@/hooks/useInkTheme';
+import { AccesoPanel } from '@/views/components/AccesoPanel';
 import { ChapterPanel } from '@/views/components/ChapterPanel';
 import { FieldNotes } from '@/views/components/FieldNotes';
 import { Hero } from '@/views/components/Hero';
@@ -35,6 +37,7 @@ export function LandingPage() {
     openingSalas,
     tapLogo,
   } = useLandingController();
+  const { sesion } = useSesionController();
   const page = useRef<HTMLDivElement>(null);
   const [webgl] = useState(supportsWebGL2);
   const [ready, setReady] = useState(false);
@@ -67,6 +70,7 @@ export function LandingPage() {
           total={chapters.length - 1}
           label={activeChapter.sectionLabel}
           onLogoTap={tapLogo}
+          action={<AccesoPanel conSesion={sesion !== null} />}
         />
       )}
       <ProgressRail
