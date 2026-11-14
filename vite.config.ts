@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { pueblosApiMock } from './mock/pueblosApiMock.ts';
+import { adminSalasApiMock } from './mock/adminSalasApiMock.ts';
 import { authApiMock, usuariosApiMock } from './mock/usuariosApiMock.ts';
 
 const NAVY = '#000F20';
@@ -17,6 +18,7 @@ export default defineConfig(({ mode }) => {
       useMock && pueblosApiMock(),
       useMock && authApiMock(),
       useMock && usuariosApiMock(),
+      useMock && adminSalasApiMock(),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['fonts/*.woff2', 'icons/apple-touch-icon.png'],

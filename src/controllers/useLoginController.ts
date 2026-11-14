@@ -6,7 +6,7 @@ import { NetworkError } from '@/repositories/http/httpClient';
 import { LoginRechazadoError, sesionService, type SesionService } from '@/services/sesionService';
 
 /** A dónde va el administrador si llegó a /login directo. */
-const INICIO = '/usuarios';
+const INICIO = '/admin';
 
 function mensajeDeError(error: unknown): string {
   if (error instanceof LoginRechazadoError) return error.message;

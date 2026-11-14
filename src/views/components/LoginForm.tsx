@@ -5,6 +5,7 @@ import { tieneErrores } from '@/services/validation';
 import { fieldA11y } from '@/views/utils/fieldA11y';
 import { Button } from './Button';
 import { FormField } from './FormField';
+import { PasswordInput } from './PasswordInput';
 import styles from './FormPanel.module.css';
 
 interface LoginFormProps {
@@ -56,8 +57,7 @@ export function LoginForm({ onSubmit, entrando }: LoginFormProps) {
       </FormField>
 
       <FormField label="Contraseña" htmlFor="login-password" error={errores.password}>
-        <input
-          type="password"
+        <PasswordInput
           {...fieldA11y('login-password', errores.password)}
           value={datos.password}
           autoComplete="current-password"

@@ -1,8 +1,7 @@
 import { ROL_LABEL, type Usuario } from '@/models/Usuario';
 import { cx } from '@/views/utils/cx';
+import { formatearFecha } from '@/views/utils/fecha';
 import styles from './UsuarioCard.module.css';
-
-const fecha = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 
 interface UsuarioCardProps {
   usuario: Usuario;
@@ -17,7 +16,7 @@ export function UsuarioCard({ usuario }: UsuarioCardProps) {
       </header>
       <h3 className={styles.name}>{usuario.nombre}</h3>
       <p className={styles.email}>{usuario.correo}</p>
-      <p className={styles.meta}>Alta {fecha.format(new Date(usuario.creadoEn))}</p>
+      <p className={styles.meta}>Alta {formatearFecha(usuario.creadoEn)}</p>
     </article>
   );
 }

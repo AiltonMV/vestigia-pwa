@@ -13,9 +13,10 @@ interface RutaProtegidaProps {
  */
 export function RutaProtegida({ children }: RutaProtegidaProps) {
   const { sesion } = useSesionController();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   if (!sesion) {
-    const state: RedireccionLogin = { desde: pathname };
+    // Con la búsqueda, para volver al mismo filtro y página del panel.
+    const state: RedireccionLogin = { desde: pathname + search };
     return <Navigate to="/login" replace state={state} />;
   }
   return children;

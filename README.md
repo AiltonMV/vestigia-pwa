@@ -260,12 +260,16 @@ npm run build && npm run preview   # prueba del Service Worker y la instalación
 - **Sin backend (mock en memoria con el mismo contrato):** `VITE_API_MOCK=true` y `VITE_API_URL` vacío. Funciona con `npm run dev` y con `npm run build && npm run preview`.
 - **Offline:** el catálogo se cachea con *network-first* (espera 5 s a la red y, sin respuesta, muestra la última copia). Cada petición tiene un límite de 10 s y se cancela al salir de la página.
 
-### Usuarios (administración)
+### Panel de administración
 
-- **Entrada:** `/usuarios`. Sin sesión manda a `/login` y, al entrar, regresa.
+- **Entrada:** botón «Iniciar sesión» de la barra superior de la página principal («Panel» si ya hay sesión), o directo en `/admin`. Sin sesión manda a `/login` y, al entrar, regresa. `/usuarios` redirige a `/admin/usuarios`.
+- **Encabezado:** nombre y correo de quien inició sesión, estado de conexión, «Cerrar sesión» y las pestañas Salas y Usuarios.
 - **Sesión:** `POST /api/v1/auth/login` con correo y contraseña. El token se guarda en `sessionStorage` (sobrevive a recargar, se pierde al cerrar la pestaña), dura 8 horas y va como `Authorization: Bearer` en cada petición. Un `401` borra la sesión y regresa a `/login`; «Cerrar sesión» llama a `POST /api/v1/auth/logout`.
-- **Qué hace:** lista (`GET /api/v1/admin/usuarios`) y da de alta administradores (`POST`, con contraseña de 8 a 72 caracteres). Editar y eliminar existen en el backend pero la PWA todavía no los usa. Contrato completo: `docs/api.md`, sección «Sesión y administración», del repo `vestigia-backend`.
-- **Sin backend:** con `VITE_API_MOCK=true`, entra con `admin@vestigia.site` / `vestigia-admin`. Los datos y las sesiones se reinician al reiniciar Vite.
+- **Salas (`/admin/salas`):** todas las partidas, vivas y terminadas, de la más nueva a la más antigua (`GET /api/v1/admin/salas`, 20 por página), con filtro por estado. El filtro y la página quedan en la URL. Cada sala abre su detalle (`/admin/salas/{id}`): escena, dispositivos conectados, puzzles, descubrimientos y bitácora. Solo lectura: cerrar salas desde el panel no está implementado.
+- **Usuarios (`/admin/usuarios`):** lista (`GET /api/v1/admin/usuarios`) y da de alta administradores (`POST`, con contraseña de 8 a 72 caracteres). Editar y eliminar existen en el backend pero la PWA todavía no los usa.
+- **Contraseñas:** los campos de contraseña (login y alta) tienen un botón para mostrarla u ocultarla.
+- **Contrato completo:** `docs/api.md`, sección «Sesión y administración», del repo `vestigia-backend`.
+- **Sin backend:** con `VITE_API_MOCK=true`, entra con `admin@vestigia.site` / `vestigia-admin`. El mock trae cinco salas de ejemplo. Los datos y las sesiones se reinician al reiniciar Vite.
 
 ### Ejecución con Docker
 

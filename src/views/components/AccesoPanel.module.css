@@ -1,0 +1,28 @@
+/* Same tokens as the landing (--ink, --rule, --accent), so it follows the day/night fade. */
+.acceso {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--rule, rgb(255 252 244 / 0.22));
+  border-radius: 999px;
+  color: var(--ink, var(--color-ivory));
+  font: 600 var(--step--1) / 1 var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.acceso:hover,
+.acceso:focus-visible {
+  border-color: var(--accent, var(--color-yellow));
+  color: var(--accent, var(--color-yellow));
+}
+
+.acceso:focus-visible {
+  outline: 2px solid var(--accent, var(--color-yellow));
+  outline-offset: 2px;
+}

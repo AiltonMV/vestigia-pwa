@@ -9,6 +9,8 @@ interface ListSectionProps<T> {
   id: string;
   title: string;
   items: T[];
+  /** Total que se muestra junto al título; por defecto, cuántos elementos hay. */
+  count?: number;
   getKey: (item: T) => string;
   renderItem: (item: T) => ReactNode;
   estado: EstadoCarga;
@@ -27,6 +29,7 @@ export function ListSection<T>({
   id,
   title,
   items,
+  count = items.length,
   getKey,
   renderItem,
   estado,
@@ -40,7 +43,7 @@ export function ListSection<T>({
   return (
     <section className={styles.list} aria-labelledby={titleId} aria-busy={estado === 'cargando'}>
       <h2 id={titleId} className={styles.title}>
-        {title} {estado !== 'cargando' && <span className={styles.count}>{items.length}</span>}
+        {title} {estado !== 'cargando' && <span className={styles.count}>{count}</span>}
       </h2>
 
       {estado === 'cargando' && <StatusMessage title={loadingTitle} />}

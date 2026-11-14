@@ -47,8 +47,8 @@ const passwords = new Map<string, string>([[usuarios[0].id, 'vestigia-admin']]);
 const sesiones = new Map<string, Sesion>();
 const fallidos = new Map<string, number>();
 
-/** The user behind the `Authorization: Bearer` header, or `null` (→ 401). */
-function autenticar(req: IncomingMessage): Usuario | null {
+/** The user behind the `Authorization: Bearer` header, or `null` (→ 401). Shared with the other admin mocks. */
+export function autenticar(req: IncomingMessage): Usuario | null {
   const token = req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
   const sesion = token ? sesiones.get(token) : undefined;
   if (!token || !sesion || sesion.expira <= Date.now()) return null;
