@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import {
   ESCENA_LABEL,
   ESTADO_SALA_LABEL,
@@ -20,7 +21,7 @@ interface SalaCardProps {
 export function SalaCard({ sala, desde }: SalaCardProps) {
   const state: RegresoDetalle = { desde };
   return (
-    <Link to={`/admin/salas/${sala.id}`} state={state} className={styles.card}>
+    <Link to={RUTAS.sala(sala.id)} state={state} className={styles.card}>
       <header className={styles.header}>
         <h3 className={styles.codigo}>{sala.codigo}</h3>
         <Tag tone={TONO_ESTADO_SALA[sala.estado]}>{ESTADO_SALA_LABEL[sala.estado]}</Tag>

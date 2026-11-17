@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import { sesionService, type SesionService } from '@/services/sesionService';
 
 /** Sesión de administración actual y su cierre. */
@@ -12,7 +13,7 @@ export function useSesionController(service: SesionService = sesionService) {
   const cerrarSesion = useCallback(async () => {
     setSaliendo(true);
     await service.cerrarSesion();
-    navigate('/login', { replace: true });
+    navigate(RUTAS.login, { replace: true });
   }, [service, navigate]);
 
   return { sesion, saliendo, cerrarSesion };
