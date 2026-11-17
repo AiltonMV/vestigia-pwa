@@ -25,6 +25,14 @@
   pointer-events: none;
 }
 
+/* Bottom-right, opposite the sound toggle and at its height. */
+.pie {
+  position: fixed;
+  z-index: 6;
+  right: var(--gutter);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 26px);
+}
+
 .track {
   position: relative;
   z-index: -1;

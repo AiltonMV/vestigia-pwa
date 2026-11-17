@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import { useSesionController } from '@/controllers/useSesionController';
 import type { RedireccionLogin } from '@/models/Sesion';
 
@@ -17,7 +18,7 @@ export function RutaProtegida({ children }: RutaProtegidaProps) {
   if (!sesion) {
     // Con la búsqueda, para volver al mismo filtro y página del panel.
     const state: RedireccionLogin = { desde: pathname + search };
-    return <Navigate to="/login" replace state={state} />;
+    return <Navigate to={RUTAS.login} replace state={state} />;
   }
   return children;
 }

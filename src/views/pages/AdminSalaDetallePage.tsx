@@ -1,4 +1,5 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import { useAdminSalaController } from '@/controllers/useAdminSalaController';
 import {
   ESCENA_LABEL,
@@ -33,7 +34,7 @@ export function AdminSalaDetallePage() {
   const { id = '' } = useParams();
   const regreso = useLocation().state as RegresoDetalle | null;
   const { sala, estado, errorCarga, recargar } = useAdminSalaController(id);
-  const volver = regreso?.desde.startsWith('/admin/salas') ? regreso.desde : '/admin/salas';
+  const volver = regreso?.desde.startsWith(RUTAS.salas) ? regreso.desde : RUTAS.salas;
 
   return (
     <div className={styles.page}>
