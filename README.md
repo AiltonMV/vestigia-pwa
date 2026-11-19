@@ -312,6 +312,26 @@ Ejemplos: `New: agrega listado de salas con caché offline` · `Fix: corrige la 
 
 El título lleva el prefijo del tipo de cambio. La descripción indica qué hace, cómo se comprobó y a qué issue se relaciona.
 
+Cada PR hacia `develop` o `main` corre dos checks de GitHub Actions:
+
+| Check | Archivo | Qué hace |
+|---|---|---|
+| Docker build | `.github/workflows/docker.yml` | Comprueba que la imagen Docker se construye. |
+| Lighthouse | `.github/workflows/lighthouse.yml` | Compila la PWA con el mock y mide `/`, `/libreta`, `/salas` y `/login` (3 corridas cada una, perfil de escritorio). |
+
+**Reportes de Lighthouse:** en el PR, *Details* del check Lighthouse → enlace a cada reporte (dura 7 días) o, en el resumen, el artefacto `lighthouse-results` con los HTML. La configuración está en `lighthouserc.json`.
+
+**Mínimos (solo avisan, no bloquean el merge):** rendimiento 50, accesibilidad 90, buenas prácticas 90 y SEO 90. Lighthouse ya no tiene categoría «PWA» desde su versión 12, y el dashboard no se mide porque pide sesión.
+
+**En local** (con Chrome instalado), en PowerShell:
+
+```powershell
+$env:VITE_API_MOCK='true'; npm run build
+npx @lhci/cli collect; npx @lhci/cli assert
+```
+
+Los reportes quedan en `.lighthouseci/` (ignorada por git).
+
 ## 10. Próximos pasos
 
 - [ ] Confirmar la lista de endpoints con el backend.
