@@ -15,6 +15,9 @@ const PueblosPage = lazy(() =>
 const LibretaPage = lazy(() =>
   import('@/views/pages/LibretaPage').then((module) => ({ default: module.LibretaPage })),
 );
+const PitchPage = lazy(() =>
+  import('@/views/pages/PitchPage').then((module) => ({ default: module.PitchPage })),
+);
 const UsuariosPage = lazy(() =>
   import('@/views/pages/UsuariosPage').then((module) => ({ default: module.UsuariosPage })),
 );
@@ -46,6 +49,7 @@ function App() {
         <Routes>
           <Route path={RUTAS.inicio} element={<LandingPage />} />
           <Route path={RUTAS.libreta} element={<LibretaPage />} />
+          <Route path={RUTAS.pitch} element={<PitchPage />} />
           <Route path={RUTAS.pueblos} element={<PueblosPage />} />
           <Route path={RUTAS.login} element={<LoginPage />} />
           <Route

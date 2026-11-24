@@ -1,0 +1,108 @@
+/* Layers: 3D scene → blackout → slides → presenter notes. */
+.page {
+  /* Interface tokens; `useInkTheme` blends them towards the notebook with the scene. */
+  --ink: var(--color-ivory);
+  --ink-soft: rgb(255 252 244 / 0.62);
+  --rule: rgb(255 252 244 / 0.22);
+  --accent: var(--color-yellow);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-navy);
+  color: var(--ink);
+  cursor: none;
+  /* No double-tap zoom, so taps advance at once. */
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.apagon {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #00070f;
+  pointer-events: none;
+  opacity: 0;
+  /* Plays each time the screen stops being dark. */
+  animation: lamp 1.2s linear backwards;
+}
+
+.dark {
+  opacity: 1;
+  animation: none;
+  transition: opacity 0.32s ease-in;
+}
+
+/* A warm lamp catching: two failed sparks, then it holds. */
+@keyframes lamp {
+  0% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0.45;
+  }
+  16% {
+    opacity: 0.95;
+  }
+  34% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 0.8;
+  }
+  58% {
+    opacity: 0.18;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.slides {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* Display only: taps go through to the page, which turns them into next/previous. */
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.32s ease,
+    visibility 0s linear 0.32s;
+}
+
+.active {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.6s ease var(--enter-delay),
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apagon:not(.dark) {
+    animation-duration: 0.5s;
+    animation-name: fade;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+}
