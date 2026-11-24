@@ -1,0 +1,378 @@
+/*
+ * Each slide's own prop, in `cq*` units of the 16:9 frame. Nothing plays until `.shown`, and
+ * dropping `.shown` resets it, so going back and forth replays the moment.
+ * Props that open with their slide wait `--enter-delay` (the light coming back after a cut).
+ */
+.detail {
+  --wait: calc(var(--lead, 0) * var(--enter-delay, 0ms));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.detail.shown {
+  opacity: 1;
+  transition: opacity 0.6s ease var(--wait);
+}
+
+/* ——— Radio: a backlit AM dial; the needle searches, the static settles into a voice. ——— */
+
+.radio {
+  position: absolute;
+  right: 6cqw;
+  bottom: 16cqh;
+  display: grid;
+  gap: 1.6cqh;
+  width: 30cqw;
+  padding: 2.2cqh 1.8cqw 2.4cqh;
+  border: 1px solid rgb(255 204 0 / 0.35);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgb(255 204 0 / 0.16), transparent 70%),
+    rgb(0 15 32 / 0.78);
+  box-shadow:
+    0 0 4cqw rgb(255 204 0 / 0.1),
+    0 2cqh 4cqh rgb(0 0 0 / 0.45);
+  text-shadow: none;
+}
+
+.radioHead {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font: 600 0.85cqw / 1 var(--font-sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+}
+
+/* The station lamp: dim while there is only static, lit once the voice holds. */
+.lamp {
+  display: flex;
+  align-items: center;
+  gap: 0.6cqw;
+}
+
+.lamp::before {
+  content: '';
+  width: 0.6cqw;
+  height: 0.6cqw;
+  border-radius: 50%;
+  background: rgb(255 204 0 / 0.18);
+}
+
+.shown .lamp {
+  animation: lampText 3.2s ease both var(--wait);
+}
+
+.shown .lamp::before {
+  animation: lampOn 3.2s ease both var(--wait);
+}
+
+@keyframes lampText {
+  0%,
+  80% {
+    color: var(--color-mist);
+  }
+  100% {
+    color: var(--color-yellow);
+  }
+}
+
+@keyframes lampOn {
+  0%,
+  80% {
+    background: rgb(255 204 0 / 0.18);
+    box-shadow: none;
+  }
+  100% {
+    background: var(--color-yellow);
+    box-shadow: 0 0 1cqw var(--color-yellow);
+  }
+}
+
+.scale {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 2.4cqh;
+  font: 500 1.05cqw / 1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 214 90 / 0.85);
+  /* Tick marks printed on the glass. */
+  background: repeating-linear-gradient(90deg, rgb(255 214 90 / 0.55) 0 1px, transparent 1px 1.5cqw)
+    top / 100% 1.2cqh no-repeat;
+}
+
+.needle {
+  position: absolute;
+  top: -1cqh;
+  bottom: -1cqh;
+  left: 12%;
+  width: 2px;
+  background: var(--color-ivory);
+  box-shadow: 0 0 0.8cqw rgb(255 252 244 / 0.7);
+}
+
+/* Searching sweeps that slow down, then the needle rests on the station. */
+.shown .needle {
+  animation: tune 2.6s cubic-bezier(0.45, 0, 0.25, 1) both var(--wait);
+}
+
+@keyframes tune {
+  0% {
+    left: 8%;
+  }
+  30% {
+    left: 78%;
+  }
+  55% {
+    left: 30%;
+  }
+  78% {
+    left: 55%;
+  }
+  100% {
+    left: 47%;
+  }
+}
+
+.wave {
+  width: 100%;
+  height: 5cqh;
+  overflow: visible;
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.static {
+  transform-box: fill-box;
+  transform-origin: center;
+  stroke: rgb(255 252 244 / 0.55);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.voice {
+  stroke: var(--color-yellow);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+}
+
+.shown .static {
+  animation:
+    hiss 0.12s linear infinite,
+    settle 3s ease both var(--wait);
+}
+
+.shown .voice {
+  animation: voice 3s ease both var(--wait);
+}
+
+/* The static flips between two jagged frames, too fast to read as a line. */
+@keyframes hiss {
+  0%,
+  49% {
+    translate: 0 0;
+    scale: 1 1;
+  }
+  50%,
+  100% {
+    translate: 0 0.6cqh;
+    scale: 1 -1;
+  }
+}
+
+@keyframes settle {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes voice {
+  0%,
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ——— Photograph: three torn pieces settle and close into one print. ——— */
+
+.photo {
+  position: absolute;
+  left: 7cqw;
+  top: 63cqh;
+  width: 17cqw;
+  aspect-ratio: 4 / 3;
+  rotate: -3deg;
+  filter: drop-shadow(0 0.8cqh 1.2cqh rgb(23 33 43 / 0.35));
+}
+
+.piece {
+  position: absolute;
+  inset: 0;
+  padding: 0.5cqw;
+  background: var(--color-ivory);
+  opacity: 0;
+  translate: var(--dx) var(--dy);
+  rotate: var(--rot);
+}
+
+.piece svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.shown .piece {
+  animation: assemble 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--wait) + var(--order) * 260ms + 200ms);
+}
+
+@keyframes assemble {
+  from {
+    opacity: 0;
+    translate: var(--dx) var(--dy);
+    rotate: var(--rot);
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+
+/* Once whole, a warm light runs round the print: the puzzle is solved. */
+.photo::after {
+  content: '';
+  position: absolute;
+  inset: -0.5cqw;
+  border: 2px solid var(--color-yellow);
+  opacity: 0;
+}
+
+.shown .photo::after {
+  animation: solved 1.4s ease both;
+  animation-delay: calc(var(--wait) + 1.5s);
+}
+
+@keyframes solved {
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* ——— Hook: paper sea cut-outs in front of the maquette, like a toy theatre. ——— */
+
+.cutouts {
+  position: absolute;
+  inset: auto -50cqw 0;
+  height: 19cqh;
+  pointer-events: none;
+}
+
+/* Back to front: each strip is shorter, darker and stands closer to the audience. */
+.cutout {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  height: calc(100% - var(--order) * 4.5cqh);
+  overflow: visible;
+  translate: 0 110%;
+  stroke: rgb(255 252 244 / 0.28);
+  stroke-width: 1.5;
+}
+
+.cutout path {
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 -0.8cqh 1cqh rgb(0 0 0 / 0.55));
+}
+
+.cutout:nth-child(1) {
+  fill: var(--color-slate);
+}
+
+.cutout:nth-child(2) {
+  fill: #14283a;
+}
+
+/* The front strip catches the lighthouse on its cut edge. */
+.cutout:nth-child(3) {
+  fill: #06121f;
+  stroke: rgb(255 204 0 / 0.6);
+}
+
+.shown .cutout {
+  animation:
+    rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+    sway 9s ease-in-out infinite alternate;
+  animation-delay:
+    calc(var(--wait) + var(--order) * 200ms), calc(var(--wait) + 0.7s + var(--order) * 200ms);
+}
+
+.shown .cutout:nth-child(2) {
+  animation-duration: 0.7s, 7s;
+}
+
+.shown .cutout:nth-child(3) {
+  animation-duration: 0.7s, 11s;
+}
+
+@keyframes rise {
+  from {
+    translate: 0 110%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes sway {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 1.6cqw 0.4cqh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shown .needle {
+    animation: none;
+    left: 47%;
+  }
+
+  .shown .static {
+    animation: none;
+    opacity: 0;
+  }
+
+  .shown .voice {
+    animation: none;
+    opacity: 1;
+  }
+
+  .shown .piece {
+    animation: none;
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  .shown .cutout {
+    animation: none;
+    translate: 0 0;
+  }
+}

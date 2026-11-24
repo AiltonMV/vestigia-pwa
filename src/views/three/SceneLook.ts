@@ -60,6 +60,7 @@ export class SceneLook {
   private lamp: PointLight | null = null;
   /** 1 while rendering the daylight pass; shared as a uniform by materials that react to it. */
   readonly day = { value: 0 };
+  private fogScale = 1;
   private readonly emissive = new Map<MeshStandardMaterial, number>();
 
   setHemisphere(light: HemisphereLight | null) {
@@ -72,6 +73,11 @@ export class SceneLook {
 
   setLamp(light: PointLight | null) {
     this.lamp = light;
+  }
+
+  /** Thins the night haze when the camera stands farther away than the story's shots. */
+  setFogScale(scale: number) {
+    this.fogScale = scale;
   }
 
   addEmissive(material: MeshStandardMaterial, base: number) {
@@ -92,7 +98,7 @@ export class SceneLook {
       this.sun.intensity = look.sun + storm * 2.5;
     }
     if (this.lamp) this.lamp.intensity = look.lamp * lampPulse;
-    if (fog) fog.density = look.fog;
+    if (fog) fog.density = look.fog * this.fogScale;
     const glow = look.emissive * (look.emissive ? lampPulse : 1);
     for (const [material, base] of this.emissive) material.emissiveIntensity = base * glow;
     this.day.value = mode === 'day' ? 1 : 0;
