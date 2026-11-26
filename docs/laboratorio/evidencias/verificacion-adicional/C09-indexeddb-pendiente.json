@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "stores": ["clavesCifrado", "usuariosPendientes"],
+  "usuariosPendientes": [
+    {
+      "id": "924a3873-9277-4d03-998d-95336d5679f0",
+      "nombre": "Usuario Laboratorio 2",
+      "correo": "lab2@lab.test",
+      "rol": "admin",
+      "passwordCifrada": { "iv": "ArrayBuffer de 12 bytes", "datos": "ArrayBuffer de 29 bytes" },
+      "creadaEn": "2026-11-26T16:48:14.714Z",
+      "estado": "pendiente"
+    }
+  ],
+  "clavesCifrado": ["usuarios"]
+}
