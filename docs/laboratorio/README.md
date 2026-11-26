@@ -26,7 +26,7 @@ Se utilizó una instalación local de prueba. No se modificó el código funcion
 | Docker | `29.8.2`, build `7fc2dff` |
 | JDK | Eclipse Temurin OpenJDK `25.0.2+10-LTS`, JVM de 64 bits; la guía recomienda Java 21, pero el laboratorio se ejecutó con Java 25.0.2 |
 | Git — PWA | `8c2e2f09498ef2c4b87465eeeb49c61ef40d31ab` (HEAD al finalizar) |
-| Git — backend | Rama `main` observada al iniciar; SHA exacto pendiente de registrar |
+| Git — backend | Rama `main`, commit `6dc7c92946bfa029d54e51cbc6fcde3b73a3e9be` (merge del PR #24, 12 de noviembre de 2026), tomado de la copia local con la que se ejecutaron las pruebas |
 | Herramientas de pruebas | DevTools, Lighthouse, Spring Boot Actuator, psql, OWASP ZAP 2.17.0 |
 
 Se utilizó el puerto 8090 para el backend porque los puertos 8080 y 8081 estaban ocupados por el proceso System (PID 4). La PWA conservó el puerto 4173 y se configuró para usar la API real, sin mock.
@@ -288,5 +288,5 @@ Tras la revisión de la rama se agregaron `evidencias/verificacion-adicional/` (
 - C07: resultado aclarado como validación del cliente.
 - C09 y C10: aviso de pendiente, contenido de la cola cifrada, contador en cero y cola vacía tras la sincronización.
 - Instrucción de log SQL corregida (sección 3.2).
-- **Pendiente:** registrar el SHA del backend usado en las pruebas originales (`git rev-parse HEAD` en la copia local del backend). Las evidencias adicionales usaron `22fd17f` de `origin/develop`.
+- SHA del backend de las pruebas originales registrado en la sección 2: `main` en `6dc7c92`. Las evidencias adicionales usaron un commit distinto y más reciente, `22fd17f` de `origin/develop`, así que ambas series de pruebas no corresponden exactamente a la misma versión del backend.
 - **Pendiente:** BUG-001 (migración de IndexedDB) sigue abierto en el código.
