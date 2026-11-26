@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { PREFIJO_PANEL_ANTERIOR, RUTAS } from '@/config/rutas';
+import { RedirigirPanelAnterior } from '@/views/components/RedirigirPanelAnterior';
 import { RutaProtegida } from '@/views/components/RutaProtegida';
 import { ScrollToTop } from '@/views/components/ScrollToTop';
 
@@ -13,6 +15,9 @@ const PueblosPage = lazy(() =>
 const LibretaPage = lazy(() =>
   import('@/views/pages/LibretaPage').then((module) => ({ default: module.LibretaPage })),
 );
+const PitchPage = lazy(() =>
+  import('@/views/pages/PitchPage').then((module) => ({ default: module.PitchPage })),
+);
 const UsuariosPage = lazy(() =>
   import('@/views/pages/UsuariosPage').then((module) => ({ default: module.UsuariosPage })),
 );
@@ -21,6 +26,11 @@ const LoginPage = lazy(() =>
 );
 const PanelLayout = lazy(() =>
   import('@/views/pages/PanelLayout').then((module) => ({ default: module.PanelLayout })),
+);
+const DashboardInicioPage = lazy(() =>
+  import('@/views/pages/DashboardInicioPage').then((module) => ({
+    default: module.DashboardInicioPage,
+  })),
 );
 const AdminSalasPage = lazy(() =>
   import('@/views/pages/AdminSalasPage').then((module) => ({ default: module.AdminSalasPage })),
@@ -37,26 +47,28 @@ function App() {
       <ScrollToTop />
       <Suspense fallback={null}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/libreta" element={<LibretaPage />} />
-          <Route path="/salas" element={<PueblosPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path={RUTAS.inicio} element={<LandingPage />} />
+          <Route path={RUTAS.libreta} element={<LibretaPage />} />
+          <Route path={RUTAS.pitch} element={<PitchPage />} />
+          <Route path={RUTAS.pueblos} element={<PueblosPage />} />
+          <Route path={RUTAS.login} element={<LoginPage />} />
           <Route
-            path="/admin"
+            path={RUTAS.dashboard}
             element={
               <RutaProtegida>
                 <PanelLayout />
               </RutaProtegida>
             }
           >
-            <Route index element={<Navigate to="salas" replace />} />
+            <Route index element={<DashboardInicioPage />} />
             <Route path="salas" element={<AdminSalasPage />} />
             <Route path="salas/:id" element={<AdminSalaDetallePage />} />
             <Route path="usuarios" element={<UsuariosPage />} />
           </Route>
-          {/* La página de usuarios vivía aquí antes del panel. */}
-          <Route path="/usuarios" element={<Navigate to="/admin/usuarios" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Direcciones anteriores del panel y de la página de usuarios. */}
+          <Route path={`${PREFIJO_PANEL_ANTERIOR}/*`} element={<RedirigirPanelAnterior />} />
+          <Route path="/usuarios" element={<Navigate to={RUTAS.usuarios} replace />} />
+          <Route path="*" element={<Navigate to={RUTAS.inicio} replace />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

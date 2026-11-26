@@ -1,16 +1,15 @@
 import { Link } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import styles from './AccesoPanel.module.css';
 
-interface AccesoPanelProps {
-  /** Con sesión lleva directo al panel; sin ella, a iniciar sesión. */
-  conSesion: boolean;
-}
-
-/** Enlace discreto al panel de administración, con los colores de la página donde está. */
-export function AccesoPanel({ conSesion }: AccesoPanelProps) {
+/**
+ * Enlace discreto al dashboard para el equipo; los jugadores no lo necesitan.
+ * Sin sesión, la ruta protegida pide iniciar sesión y después regresa.
+ */
+export function AccesoPanel() {
   return (
-    <Link to={conSesion ? '/admin' : '/login'} className={styles.acceso}>
-      {conSesion ? 'Panel' : 'Iniciar sesión'}
+    <Link to={RUTAS.dashboard} className={styles.acceso}>
+      Administración
     </Link>
   );
 }

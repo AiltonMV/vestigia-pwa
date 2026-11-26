@@ -1,4 +1,4 @@
-import { clamp01, smooth } from '@/views/utils/math';
+import { clamp01, easeInOutCubic, lerp, smooth } from '@/views/utils/math';
 import { FINALE, glitchAt, localProgress, sketchAt } from './timeline';
 
 /** Below this width the layout stacks: text under the scene, fewer notes. */
@@ -54,14 +54,31 @@ export interface StoryFrame {
 
 export type FrameListener = (frame: StoryFrame) => void;
 
+/** A programmatic move of the progress, eased from `from` to `to`. */
+interface Glide {
+  from: number;
+  to: number;
+  /** 0 → 1 through the glide. */
+  t: number;
+  value: number;
+}
+
 const INERTIA = 5.5;
 const MAX_DELTA = 0.05;
+/** How long a `seek` takes to glide to its target. */
+const SEEK_SECONDS = 1.6;
 const firstFlashIn = () => 6 + Math.random() * 6;
 const nextFlashIn = () => 7 + Math.random() * 9;
 
+function advanceGlide(glide: Glide, dt: number) {
+  glide.t = Math.min(1, glide.t + dt / SEEK_SECONDS);
+  glide.value = lerp(glide.from, glide.to, easeInOutCubic(glide.t));
+  return glide.value;
+}
+
 /**
- * Single animation loop of the landing: turns the page scroll into a smoothed story progress
- * and derived values. Renderers (the 3D scene) run first each frame, then the DOM listeners,
+ * Single animation loop of the landing: turns the page scroll (or `seek`) into a smoothed story
+ * progress and derived values. Renderers (the 3D scene) run first each frame, then the DOM listeners,
  * so text and notes always match the image on screen.
  */
 export class StoryClock {
@@ -74,6 +91,7 @@ export class StoryClock {
   private started = false;
   private maxScroll = 1;
   private nextFlash = firstFlashIn();
+  private glide: Glide | null = null;
 
   constructor() {
     this.frame = {
@@ -133,6 +151,18 @@ export class StoryClock {
     });
   }
 
+  /**
+   * Drives the progress from code instead of the page scroll (the pitch); from the first call on
+   * the scroll is ignored. Glides to `progress`, or jumps there when `instant`.
+   */
+  seek(progress: number, { instant = false }: { instant?: boolean } = {}) {
+    const to = clamp01(progress);
+    const jump = instant || this.frame.reducedMotion;
+    const from = jump ? to : (this.glide?.value ?? this.frame.progress);
+    this.glide = { from, to, t: jump ? 1 : 0, value: from };
+    if (jump) this.frame.progress = to;
+  }
+
   private measure = () => {
     this.frame.width = window.innerWidth;
     this.frame.height = window.innerHeight;
@@ -142,16 +172,18 @@ export class StoryClock {
   private tick = (now: number) => {
     this.raf = requestAnimationFrame(this.tick);
     const f = this.frame;
-    const target = clamp01(window.scrollY / this.maxScroll);
-
-    if (!this.started) {
-      // Start where the page already is (e.g. after a reload) instead of gliding from the top.
+    const first = !this.started;
+    if (first) {
       this.started = true;
       this.last = now;
-      f.progress = target;
     }
     const dt = Math.min(MAX_DELTA, (now - this.last) / 1000);
     this.last = now;
+    const target = this.glide
+      ? advanceGlide(this.glide, dt)
+      : clamp01(window.scrollY / this.maxScroll);
+    // Start where the page already is (e.g. after a reload) instead of gliding from the top.
+    if (first) f.progress = target;
     f.time += dt;
     f.delta = dt;
 

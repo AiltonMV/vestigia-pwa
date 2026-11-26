@@ -1,0 +1,31 @@
+name: Lighthouse
+
+# Mide la calidad de la PWA (rendimiento, accesibilidad, buenas prácticas y SEO) en cada PR.
+# Avisa si una calificación baja del mínimo, pero no bloquea el merge.
+on:
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    env:
+      # Sin backend en CI: el catálogo de pueblos y el login responden con el mock.
+      VITE_API_MOCK: 'true'
+    steps:
+      - uses: actions/checkout@v7
+      # v5 corre en Node 24; v4 corría en Node 20, que GitHub ya retiró.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./lighthouserc.json
+          # Reportes HTML descargables desde el resumen del check.
+          uploadArtifacts: true
+          # Además, un enlace público a cada reporte (se borra a los 7 días).
+          temporaryPublicStorage: true

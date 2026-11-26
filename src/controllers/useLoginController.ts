@@ -1,12 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { RUTAS } from '@/config/rutas';
 import type { Credenciales, ErroresDeCredenciales, RedireccionLogin } from '@/models/Sesion';
 import type { Aviso } from '@/models/Vista';
 import { NetworkError } from '@/repositories/http/httpClient';
 import { LoginRechazadoError, sesionService, type SesionService } from '@/services/sesionService';
 
 /** A dónde va el administrador si llegó a /login directo. */
-const INICIO = '/admin';
+const INICIO = RUTAS.dashboard;
 
 function mensajeDeError(error: unknown): string {
   if (error instanceof LoginRechazadoError) return error.message;
