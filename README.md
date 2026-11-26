@@ -14,9 +14,9 @@ Vestigia es un videojuego en Unity que se complementa con un teléfono: el jugad
 La PWA tiene dos partes:
 
 - **Sitio público:** portada con escena 3D (`/`), libreta con capturas reales de la app móvil (`/libreta`), presentación del elevator pitch (`/pitch`) y catálogo de pueblos libres y ocupados (`/salas`).
-- **Panel de administración** (`/dashboard`, con sesión): consultar las partidas y su detalle, y dar de alta administradores. Sigue funcionando con mala conexión: el catálogo se cachea y el alta de administradores se guarda en una cola cifrada hasta que vuelve la red.
+- **Panel de administración** (`/dashboard`, con sesión): consultar las partidas y su detalle, liberar una sala viva y dar de alta administradores. Sigue funcionando con mala conexión: el catálogo se cachea y el alta de administradores se guarda en una cola cifrada hasta que vuelve la red.
 
-La PWA **no** crea, edita ni cierra salas: eso lo hacen el juego y la app móvil.
+La PWA **no** crea ni edita salas: eso lo hacen el juego y la app móvil. Lo único que hace sobre una sala es liberarla (cerrarla) desde el panel de administración.
 
 ## 2. Propuesta de arquitectura
 
@@ -181,7 +181,7 @@ El video muestra el recorrido por las tres pantallas (inicio de sesión, lista d
 | `/salas` | Catálogo de pueblos, con filtro libres / en partida | No |
 | `/login` | Inicio de sesión de administrador | No |
 | `/dashboard` | Inicio con accesos a cada pantalla | Sí |
-| `/dashboard/salas` y `/dashboard/salas/{id}` | Partidas (paginadas, filtro por estado) y su detalle | Sí |
+| `/dashboard/salas` y `/dashboard/salas/{id}` | Partidas (paginadas, filtro por estado), su detalle y el botón «Liberar sala» | Sí |
 | `/dashboard/usuarios` | Lista y alta de administradores, y altas en cola | Sí |
 
 Componentes transversales: aviso de conexión, estados de carga y de error, y botón para mostrar u ocultar contraseñas.
