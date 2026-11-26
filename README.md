@@ -115,6 +115,8 @@ Se genera con `vite-plugin-pwa` (Workbox).
 - Al recuperar la conexión se reenvían las operaciones pendientes. Si el navegador no soporta *Background Sync*, se usa el evento `online` como respaldo.
 - Mientras la app está abierta, la lista de salas y el progreso se refrescan periódicamente en segundo plano.
 - Se ofrece instalar la app desde el navegador (`beforeinstallprompt`).
+- **Alta de administradores sin conexión:** `POST /api/v1/admin/usuarios` se guarda en la cola de IndexedDB (`vestigia` › `usuariosPendientes`) con la contraseña cifrada con AES-GCM (WebCrypto, clave no extraíble); protege contra leer el volcado de la base, no contra un XSS. Se reenvía en orden al volver la red, al abrir el panel y tras iniciar sesión.
+- Al reenviar: `409 correo_duplicado` cuenta como ya sincronizado y se borra; `400` marca la entrada con error y no se reintenta; `401` o falta de red detienen el envío y la entrada sigue pendiente. Cerrar sesión borra la cola y la clave.
 
 ```mermaid
 sequenceDiagram
