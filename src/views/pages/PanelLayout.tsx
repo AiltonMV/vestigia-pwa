@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { RUTAS } from '@/config/rutas';
+import { useSincronizacionUsuarios } from '@/controllers/useSincronizacionUsuarios';
 import { useSesionController } from '@/controllers/useSesionController';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { ConnectionStatus } from '@/views/components/ConnectionStatus';
@@ -19,6 +20,7 @@ const SECCIONES = [
 export function PanelLayout() {
   const { sesion, saliendo, cerrarSesion } = useSesionController();
   const online = useOnlineStatus();
+  const { pendientes, sincronizando } = useSincronizacionUsuarios();
 
   return (
     <div className={styles.page}>
@@ -30,7 +32,11 @@ export function PanelLayout() {
             <span className={styles.eyebrow}>Dashboard</span>
           </Link>
           <div className={styles.cuenta}>
-            <ConnectionStatus online={online} pendientes={0} sincronizando={false} />
+            <ConnectionStatus
+              online={online}
+              pendientes={pendientes.filter(({ estado }) => estado === 'pendiente').length}
+              sincronizando={sincronizando}
+            />
             {sesion && (
               <SesionActual
                 nombre={sesion.usuario.nombre}

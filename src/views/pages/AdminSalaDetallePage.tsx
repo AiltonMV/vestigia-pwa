@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { RUTAS } from '@/config/rutas';
 import { useAdminSalaController } from '@/controllers/useAdminSalaController';
@@ -10,6 +11,7 @@ import {
   type RegresoDetalle,
 } from '@/models/SalaAdmin';
 import { Button } from '@/views/components/Button';
+import { ConfirmDialog } from '@/views/components/ConfirmDialog';
 import { StatusMessage } from '@/views/components/StatusMessage';
 import { Tag } from '@/views/components/Tag';
 import { formatearFecha } from '@/views/utils/fecha';
@@ -29,11 +31,30 @@ function Datos({ datos }: { datos: Record<string, unknown> }) {
 
 const siNo = (valor: boolean) => (valor ? 'Sí' : 'No');
 
-/** Detalle de una sala: resumen, puzzles, descubrimientos y bitácora. Solo lectura. */
+/** Detalle de una sala: resumen, puzzles, descubrimientos y bitácora; permite liberarla si sigue viva. */
 export function AdminSalaDetallePage() {
   const { id = '' } = useParams();
   const regreso = useLocation().state as RegresoDetalle | null;
-  const { sala, estado, errorCarga, recargar } = useAdminSalaController(id);
+  const {
+    sala,
+    estado,
+    errorCarga,
+    liberando,
+    errorLiberar,
+    liberar,
+    limpiarErrorLiberar,
+    recargar,
+  } = useAdminSalaController(id);
+  const [confirmando, setConfirmando] = useState(false);
+  const viva = sala?.estado === 'activa' || sala?.estado === 'esperando_app';
+
+  const cerrarModal = () => {
+    setConfirmando(false);
+    limpiarErrorLiberar();
+  };
+  const confirmarLiberar = async () => {
+    if (await liberar()) setConfirmando(false);
+  };
   const volver = regreso?.desde.startsWith(RUTAS.salas) ? regreso.desde : RUTAS.salas;
 
   return (
@@ -43,11 +64,36 @@ export function AdminSalaDetallePage() {
           ← Salas
         </Link>
         {sala && (
-          <Button type="button" onClick={recargar} disabled={estado === 'cargando'}>
-            Actualizar
-          </Button>
+          <div className={styles.acciones}>
+            {viva && (
+              <Button type="button" className={styles.liberar} onClick={() => setConfirmando(true)}>
+                Liberar sala
+              </Button>
+            )}
+            <Button type="button" onClick={recargar} disabled={estado === 'cargando'}>
+              Actualizar
+            </Button>
+          </div>
         )}
       </div>
+
+      {sala && (
+        <ConfirmDialog
+          open={confirmando}
+          title={`¿Liberar la sala ${sala.codigo}?`}
+          confirmLabel="Liberar sala"
+          busy={liberando}
+          error={errorLiberar}
+          onConfirm={confirmarLiberar}
+          onCancel={cerrarModal}
+        >
+          <p>
+            La partida pasará a <strong>Finalizada</strong> y el juego y la app conectados se
+            desconectarán. El pueblo quedará libre para otra partida.
+          </p>
+          <p>El historial de la sala se conserva. Esta acción no se puede deshacer.</p>
+        </ConfirmDialog>
+      )}
 
       {estado === 'cargando' && !sala && <StatusMessage title="Cargando sala…" />}
 

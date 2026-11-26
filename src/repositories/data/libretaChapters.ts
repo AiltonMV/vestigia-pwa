@@ -2,8 +2,8 @@ import type { ChapterDto } from '@/dtos/ChapterDto';
 
 /**
  * Story of the notebook page (/libreta): how the phone app works, from joining a room to the
- * end of the game. Follows the flow in the backend's `docs/integracion-flutter.md`. Each `id`
- * also picks the screen the phone shows (see `views/libreta/PhoneScreens.tsx`).
+ * end of the game. Follows the real Flutter app (`mobile/` of the Vestigia repo). Each `id`
+ * also picks the screenshot the phone shows (see `views/libreta/capturas.ts`).
  */
 export const LIBRETA_CHAPTERS: ChapterDto[] = [
   {
@@ -55,14 +55,14 @@ export const LIBRETA_CHAPTERS: ChapterDto[] = [
     end: 0.293,
   },
   {
-    id: 'burbuja',
+    id: 'pista',
     order: 3,
     kind: 'chapter',
-    section_label: 'La burbuja',
-    eyebrow: 'Paso tres · La burbuja',
-    title: 'Cuando algo despierta, una burbuja empieza a latir.',
-    body: 'Tócala para abrir el reto. Lo que resuelves en el teléfono cambia lo que pasa en la PC.',
-    highlight: 'una burbuja empieza a latir.',
+    section_label: 'La pista',
+    eyebrow: 'Paso tres · La pista',
+    title: 'Cuando algo despierta, aparece una pista nueva.',
+    body: 'Llega con el sello de pendiente. Tócala para abrir el reto: lo que resuelves en el teléfono cambia lo que pasa en la PC.',
+    highlight: 'aparece una pista nueva.',
     footnote: null,
     hint: null,
     cta: null,
@@ -125,7 +125,7 @@ export const LIBRETA_CHAPTERS: ChapterDto[] = [
     section_label: 'El observatorio',
     eyebrow: 'Reto cuatro · El observatorio',
     title: 'Con las dos coordenadas, el cielo tiene un punto exacto.',
-    body: 'Levanta el teléfono y muévelo como un telescopio. Cuando coincide, la libreta lo marca: magnetar localizado.',
+    body: 'Escribe los dos registros, calibra apuntando a la PC y mueve el teléfono como un telescopio hasta encontrar el magnetar.',
     highlight: null,
     footnote: null,
     hint: null,
