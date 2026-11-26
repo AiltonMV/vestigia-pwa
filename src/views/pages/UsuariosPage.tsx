@@ -4,15 +4,26 @@ import { Notice } from '@/views/components/Notice';
 import { SplitLayout } from '@/views/components/SplitLayout';
 import { UsuarioCard } from '@/views/components/UsuarioCard';
 import { UsuarioForm } from '@/views/components/UsuarioForm';
+import { UsuariosPendientes } from '@/views/components/UsuariosPendientes';
 
 /** Pestaña Usuarios del panel: los administradores y el alta de uno nuevo. */
 export function UsuariosPage() {
-  const { usuarios, estado, errorCarga, guardando, aviso, cerrarAviso, guardar, recargar } =
-    useUsuariosController();
+  const {
+    usuarios,
+    pendientes,
+    estado,
+    errorCarga,
+    guardando,
+    aviso,
+    cerrarAviso,
+    guardar,
+    recargar,
+  } = useUsuariosController();
 
   return (
     <>
       <SplitLayout aside={<UsuarioForm onSubmit={guardar} guardando={guardando} />}>
+        <UsuariosPendientes pendientes={pendientes} />
         <ListSection
           id="usuarios"
           title="Usuarios registrados"

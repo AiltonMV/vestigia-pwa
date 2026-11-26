@@ -1,8 +1,10 @@
 import { toNuevoUsuarioDto, toUsuario } from '@/dtos/usuarioMapper';
 import type { ErroresDeUsuario, NuevoUsuario, Usuario } from '@/models/Usuario';
-import { ApiError } from '@/repositories/http/httpClient';
+import type { UsuarioPendiente } from '@/models/UsuarioPendiente';
+import { ApiError, NetworkError } from '@/repositories/http/httpClient';
 import { httpUsuarioRepository, type UsuarioRepository } from '@/repositories/usuarioRepository';
-import { sesionService, type SesionService } from './sesionService';
+import { sesionService, SesionVencidaError, type SesionService } from './sesionService';
+import { usuarioColaService, type UsuarioColaService } from './usuarioColaService';
 import { validarNuevoUsuario } from './usuarioValidation';
 import { tieneErrores } from './validation';
 
@@ -17,11 +19,15 @@ export class UsuarioInvalidoError extends Error {
   }
 }
 
+/** Resultado del alta: creada en el servidor, o guardada cifrada en el dispositivo sin conexión. */
+export type ResultadoAlta =
+  { tipo: 'creado'; usuario: Usuario } | { tipo: 'encolado'; pendiente: UsuarioPendiente };
+
 /** Requiere una sesión de administrador; sin ella lanza `SesionVencidaError`. */
 export interface UsuarioService {
   getUsuarios(): Promise<Usuario[]>;
-  /** Da de alta a un administrador. Requiere conexión. */
-  createUsuario(datos: NuevoUsuario): Promise<Usuario>;
+  /** Da de alta a un administrador. Sin conexión la deja en cola; 400, 401 y 409 no se encolan. */
+  createUsuario(datos: NuevoUsuario): Promise<ResultadoAlta>;
 }
 
 const CAMPOS = new Set<string>(['nombre', 'correo', 'password']);
@@ -51,7 +57,17 @@ function errorDeAlta(error: unknown): unknown {
 export function createUsuarioService(
   usuarios: UsuarioRepository,
   sesion: SesionService,
+  cola: UsuarioColaService,
 ): UsuarioService {
+  /** Si la cola tampoco funciona, el alta falla como falla sin red: `sinRed`. */
+  const encolar = async (datos: NuevoUsuario, sinRed: NetworkError): Promise<ResultadoAlta> => {
+    try {
+      return { tipo: 'encolado', pendiente: await cola.encolar(datos) };
+    } catch {
+      throw sinRed;
+    }
+  };
+
   return {
     async getUsuarios() {
       return (await sesion.conToken((token) => usuarios.findAll(token))).map(toUsuario);
@@ -60,14 +76,24 @@ export function createUsuarioService(
     async createUsuario(datos) {
       const errores = validarNuevoUsuario(datos);
       if (tieneErrores(errores)) throw new UsuarioInvalidoError(errores);
+      if (!navigator.onLine) {
+        if (!sesion.getSesion()) throw new SesionVencidaError();
+        return encolar(datos, new NetworkError(null));
+      }
       const dto = toNuevoUsuarioDto(datos);
       try {
-        return toUsuario(await sesion.conToken((token) => usuarios.create(dto, token)));
+        const creado = await sesion.conToken((token) => usuarios.create(dto, token));
+        return { tipo: 'creado', usuario: toUsuario(creado) };
       } catch (error) {
+        if (error instanceof NetworkError) return encolar(datos, error);
         throw errorDeAlta(error);
       }
     },
   };
 }
 
-export const usuarioService = createUsuarioService(httpUsuarioRepository, sesionService);
+export const usuarioService = createUsuarioService(
+  httpUsuarioRepository,
+  sesionService,
+  usuarioColaService,
+);
