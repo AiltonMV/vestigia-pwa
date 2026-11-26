@@ -24,12 +24,13 @@ Voces provisionales: A y B. Se ajustan cuando el equipo confirme el reparto.
 | 4 | 0:45–1:15 | Core gameplay loop | B | Exploras el pueblo, el faro y el observatorio. Giras la cámara y aparecen caminos y pistas que antes estaban ocultos. Cada pista abre un acertijo: sintonizas una radio entre la estática, armas una fotografía rota, limpias el lente de un mirador, apuntas al cielo. A veces, para descubrir algo, no necesitas buscar más… necesitas aprender a mirar de otra manera. |
 | 5 | 1:15–1:45 | Diferenciador (USP) | B | Y la investigación no se limita al monitor. Tu teléfono es la libreta de Janeth: sus notas, sus pistas, todo en tu mano. Lo que resuelvas aquí abre el camino allá. Dos pantallas, una historia de unos quince minutos, sin combate. |
 | 6 | 1:45–2:15 | Diferenciador (arte) | A | Los escenarios, los puzles y su continuidad los diseñamos nosotros, con una estética de maqueta de cartón y papel. Para los personajes y otros elementos visuales contamos con la colaboración de una ilustradora. |
-| 7 | 2:15–2:40 | Estado actual y equipo | A | Hoy tenemos un prototipo jugable de principio a fin: tres personas lo completaron, en unos diecisiete minutos. Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar. |
+| 7 | 2:15–2:40 | Estado actual y equipo | A | Hoy tenemos un prototipo jugable de principio a fin, que se recorre en unos diecisiete minutos. Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar. |
 | 8 | 2:40–3:00 | Llamada a la acción | B | Lo que Janeth vio esa noche lo dejó escrito. Su libreta está en nuestro stand. Abrirla… es decisión de ustedes. |
 
 Cambios respecto al borrador:
 - "horror cósmico" pasa a "misterio y suspenso cósmico" (el proyecto dice sin terror). Decisión del equipo.
-- Se agrega una frase de qué hace el jugador (los 4 acertijos) y el dato del piloto.
+- Se agrega una frase de qué hace el jugador (los 4 acertijos) y la duración del prototipo.
+- Se quita "3 de 3 completaron el prototipo": los presentadores no lo sostienen.
 - El CTA ahora es concreto: ir al stand.
 - "1940": pendiente de confirmar, el documento final no lo menciona.
 
@@ -46,7 +47,7 @@ Cada escena entra lenta (400-700 ms), sin rebotes, con una sola animación prota
 | 4 | Core loop | Maqueta que gira 90° y revela una pista | Giro de cámara. Después 4 iconos de línea (radio, foto, lente, cielo) en amarillo | 3 |
 | 5 | Libreta | PC a un lado y celular con la libreta al otro | Tarjeta de papel Papel/Marfil que se desliza; una pista viaja de pantalla a pantalla | 2 |
 | 6 | Arte y mundo | Recortes de papel y personajes ilustrados | Piezas que se ensamblan | 1 |
-| 7 | Estado y equipo | Cifras grandes en serif amarillo: "3 de 3 completaron" y "~17 min". Nombre del equipo | Cifras que se estabilizan como estática | 2 |
+| 7 | Estado y equipo | Cifra grande en serif amarillo: "~17 min por partida". Nombre del equipo | Cifra que se estabiliza como estática | 2 |
 | 8 | Cierre / CTA | Libreta cerrada sobre una mesa, el stand | La libreta se abre lentamente. Todo se aleja y vuelve a ser maqueta | 1 |
 
 ## Material de animación propia

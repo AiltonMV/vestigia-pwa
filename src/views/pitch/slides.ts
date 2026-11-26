@@ -182,14 +182,11 @@ export const SLIDES: Slide[] = [
     kind: 'estado',
     eyebrow: 'Hoy',
     voice: 'A',
-    stats: [
-      { value: '3 de 3', label: 'completaron el prototipo', at: 0 },
-      { value: '~17 min', label: 'por partida', at: 0 },
-    ],
+    stats: [{ value: '~17 min', label: 'por partida', at: 0 }],
     claim: 'Prototipo jugable de principio a fin.',
     team: { text: 'Quetzal Bytes · UTCH', at: 1 },
     notes:
-      'Hoy tenemos un prototipo jugable de principio a fin: tres personas lo completaron, en unos diecisiete minutos. [→] Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar.',
+      'Hoy tenemos un prototipo jugable de principio a fin, que se recorre en unos diecisiete minutos. [→] Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar.',
     steps: [{ p: 0.858 }, { p: 0.862 }],
   },
   {
