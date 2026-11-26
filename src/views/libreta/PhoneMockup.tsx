@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useStoryFrame } from '@/hooks/useStoryClock';
 import { WIDE_MIN_WIDTH, type StoryClock } from '@/views/story/StoryClock';
 import { cx } from '@/views/utils/cx';
-import { PhoneScreen } from './PhoneScreens';
+import { CAPTURAS } from './capturas';
 import styles from './PhoneMockup.module.css';
 
 /** How far the phone slides away from the chapter text on wide screens. */
@@ -18,11 +18,12 @@ interface PhoneMockupProps {
 }
 
 /**
- * Drawn phone that plays the notebook app. It follows the story like the landing's 3D scene:
- * slides to the side opposite the text, and its screen changes with each chapter.
+ * Phone frame that shows the real notebook app. It follows the story like the landing's 3D
+ * scene: slides to the side opposite the text, and its screen changes with each chapter.
  */
 export function PhoneMockup({ clock, screen, finale }: PhoneMockupProps) {
   const root = useRef<HTMLDivElement>(null);
+  const capture = screen ? CAPTURAS[screen] : undefined;
 
   useStoryFrame(clock, (frame) => {
     const element = root.current;
@@ -38,11 +39,9 @@ export function PhoneMockup({ clock, screen, finale }: PhoneMockupProps) {
         <div ref={root} className={styles.phone}>
           <span className={styles.island} />
           <div className={styles.screen}>
-            {/* The key remounts the screen, so its animation plays from the start each time. */}
-            {screen && (
-              <div key={screen} className={styles.layer}>
-                <PhoneScreen id={screen} />
-              </div>
+            {/* The key remounts the image, so it fades in again on every chapter change. */}
+            {capture && (
+              <img key={screen} className={styles.layer} src={capture} alt="" decoding="async" />
             )}
           </div>
         </div>

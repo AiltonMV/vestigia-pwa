@@ -46,18 +46,23 @@
 }
 
 .screen {
-  /* The screens size their text with cqw (see PhoneScreens.module.css). */
-  container-type: size;
   position: relative;
   height: 100%;
   overflow: hidden;
   border-radius: 34px;
-  background: var(--color-paper);
+  /* Shows while a capture loads; close to the app's leather and paper tones. */
+  background: #2a1a12;
 }
 
+/* A real screenshot of the app. It is a bit taller than the frame: the gesture bar at the
+   bottom is what gets cropped, never the status bar or the content at the top. */
 .layer {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
   animation: enter 0.5s ease both;
 }
 
