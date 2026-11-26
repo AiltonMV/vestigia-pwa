@@ -140,3 +140,19 @@
   font: 400 var(--step-0) / 1.4 var(--font-serif);
   color: var(--color-mist);
 }
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.liberar {
+  border-color: rgb(255 120 100 / 0.7);
+  background: transparent;
+  color: rgb(255 150 130);
+}
+
+.liberar:hover {
+  box-shadow: 0 10px 30px -10px rgb(255 120 100 / 0.5);
+}

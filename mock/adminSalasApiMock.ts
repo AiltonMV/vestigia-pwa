@@ -107,7 +107,9 @@ function resumen(detalle: (typeof salas)[number]) {
 async function handle(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url ?? '/', 'http://mock');
   const path = url.pathname;
-  if (req.method !== 'GET') return sendError(res, path, 404, 'Ruta no encontrada');
+  if (req.method !== 'GET' && req.method !== 'DELETE') {
+    return sendError(res, path, 404, 'Ruta no encontrada');
+  }
   if (!autenticar(req)) {
     return sendError(res, path, 401, 'Sesión inválida o vencida: vuelve a iniciar sesión');
   }
@@ -133,6 +135,20 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
   if (!UUID.test(id)) return sendError(res, path, 400, `'${id}' no es un UUID`);
   const detalle = salas.find((candidata) => candidata.id === id);
   if (!detalle) return sendError(res, path, 404, `No existe la sala ${id}`);
+  if (req.method === 'DELETE') {
+    // Like the backend: a live room becomes `finalizada` (nothing is deleted); a finished one is untouched.
+    if (detalle.estado === 'esperando_app' || detalle.estado === 'activa') {
+      detalle.estado = 'finalizada';
+      detalle.dispositivos = { juego: false, app: false };
+      (detalle.eventos as unknown[]).push({
+        tipo: 'sala.finalizada',
+        origen: 'servidor',
+        payload: { cerrada_por: 'admin' },
+        creado_en: new Date().toISOString(),
+      });
+    }
+    return send(res, 204);
+  }
   return send(res, 200, detalle);
 }
 

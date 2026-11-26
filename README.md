@@ -14,9 +14,9 @@ Vestigia es un videojuego en Unity que se complementa con un teléfono: el jugad
 La PWA tiene dos partes:
 
 - **Sitio público:** portada con escena 3D (`/`), libreta con capturas reales de la app móvil (`/libreta`), presentación del elevator pitch (`/pitch`) y catálogo de pueblos libres y ocupados (`/salas`).
-- **Panel de administración** (`/dashboard`, con sesión): consultar las partidas y su detalle, y dar de alta administradores. Sigue funcionando con mala conexión: el catálogo se cachea y el alta de administradores se guarda en una cola cifrada hasta que vuelve la red.
+- **Panel de administración** (`/dashboard`, con sesión): consultar las partidas y su detalle, liberar una sala viva y dar de alta administradores. Sigue funcionando con mala conexión: el catálogo se cachea y el alta de administradores se guarda en una cola cifrada hasta que vuelve la red.
 
-La PWA **no** crea, edita ni cierra salas: eso lo hacen el juego y la app móvil.
+La PWA **no** crea ni edita salas: eso lo hacen el juego y la app móvil. Lo único que hace sobre una sala es liberarla (cerrarla) desde el panel de administración.
 
 ## 2. Propuesta de arquitectura
 
@@ -57,10 +57,11 @@ Endpoints que usa la PWA:
 | `GET` | `/auth/yo` | Sesión admin | Usuario dueño de la sesión |
 | `GET` | `/admin/salas` | Sesión admin | Partidas vivas y terminadas, con filtro por estado |
 | `GET` | `/admin/salas/{id}` | Sesión admin | Detalle de una sala y su bitácora |
+| `DELETE` | `/admin/salas/{id}` | Sesión admin | Libera la sala: pasa a `finalizada` y libera el pueblo (`204`, también si ya había terminado; `404` si no existe) |
 | `GET` | `/admin/usuarios` | Sesión admin | Lista de usuarios |
 | `POST` | `/admin/usuarios` | Sesión admin | Alta de administrador (`201`; `400` datos inválidos; `409 correo_duplicado`) |
 
-El backend también tiene `PUT` y `DELETE` de usuarios y `DELETE /admin/salas/{id}`, que la PWA todavía no usa. El juego y la app usan el resto de rutas (`/salas/...`) con un token de sala distinto al de la sesión de administración.
+El backend también tiene `PUT` y `DELETE` de usuarios, que la PWA todavía no usa. El juego y la app usan el resto de rutas (`/salas/...`) con un token de sala distinto al de la sesión de administración.
 
 ### Modelo de datos (backend)
 
@@ -187,7 +188,7 @@ El video muestra el recorrido por las tres pantallas (inicio de sesión, lista d
 | `/salas` | Catálogo de pueblos, con filtro libres / en partida | No |
 | `/login` | Inicio de sesión de administrador | No |
 | `/dashboard` | Inicio con accesos a cada pantalla | Sí |
-| `/dashboard/salas` y `/dashboard/salas/{id}` | Partidas (paginadas, filtro por estado) y su detalle | Sí |
+| `/dashboard/salas` y `/dashboard/salas/{id}` | Partidas (paginadas, filtro por estado), su detalle y el botón «Liberar sala» | Sí |
 | `/dashboard/usuarios` | Lista y alta de administradores, y altas en cola | Sí |
 
 Componentes transversales: aviso de conexión, estados de carga y de error, y botón para mostrar u ocultar contraseñas.
@@ -322,7 +323,7 @@ Para probar con el backend real (repo `vestigia-backend`) hace falta Java 21 y D
 - **Encabezado:** nombre y correo de quien inició sesión, estado de conexión, «Cerrar sesión» y las pestañas Inicio, Salas y Usuarios.
 - **Inicio (`/dashboard`):** un acceso a cada pantalla de la PWA: Salas y Usuarios (administración) y la página principal, la libreta y el catálogo de pueblos (sitio público).
 - **Sesión:** `POST /api/v1/auth/login` con correo y contraseña. El token se guarda en `sessionStorage` (sobrevive a recargar, se pierde al cerrar la pestaña), dura 8 horas y va como `Authorization: Bearer` en cada petición. Un `401` borra la sesión y regresa a `/login`; «Cerrar sesión» llama a `POST /api/v1/auth/logout`.
-- **Salas (`/dashboard/salas`):** todas las partidas, vivas y terminadas, de la más nueva a la más antigua (`GET /api/v1/admin/salas`, 20 por página), con filtro por estado. El filtro y la página quedan en la URL. Cada sala abre su detalle (`/dashboard/salas/{id}`): escena, dispositivos conectados, puzzles, descubrimientos y bitácora. Solo lectura: cerrar salas desde el panel no está implementado.
+- **Salas (`/dashboard/salas`):** todas las partidas, vivas y terminadas, de la más nueva a la más antigua (`GET /api/v1/admin/salas`, 20 por página), con filtro por estado. El filtro y la página quedan en la URL. Cada sala abre su detalle (`/dashboard/salas/{id}`): escena, dispositivos conectados, puzzles, descubrimientos y bitácora. Desde el detalle, las salas vivas (`activa`, `esperando_app`) se pueden liberar con el botón «Liberar sala» y un modal de confirmación (`DELETE /api/v1/admin/salas/{id}`): la sala pasa a `finalizada` (no se borra), se desconectan el juego y la app, y su pueblo queda libre.
 - **Usuarios (`/dashboard/usuarios`):** lista (`GET /api/v1/admin/usuarios`) y da de alta administradores (`POST`, con contraseña de 8 a 72 caracteres). Sin conexión, el alta queda en cola cifrada y se muestra como pendiente hasta sincronizarse (sección 4). Editar y eliminar existen en el backend pero la PWA todavía no los usa.
 - **Contraseñas:** los campos de contraseña (login y alta) tienen un botón para mostrarla u ocultarla.
 - **Contrato completo:** `docs/api.md`, sección «Sesión y administración», del repo `vestigia-backend`.
@@ -397,7 +398,7 @@ Los reportes quedan en `.lighthouseci/` (ignorada por git).
 - [x] Manejo de sesión de administrador (token de 8 h en `sessionStorage`).
 - [x] Flujo de GitHub Actions (Docker build y Lighthouse).
 - [ ] Editar y eliminar usuarios desde el panel.
-- [ ] Cerrar salas desde el panel (`DELETE /admin/salas/{id}`).
+- [x] Cerrar salas desde el panel (`DELETE /admin/salas/{id}`).
 - [ ] Pruebas automáticas y un paso de pruebas en GitHub Actions.
 - [ ] Retirar `config/firebase.ts` y `services/api.ts`, que no se usan.
 

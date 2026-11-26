@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useVolverAlLogin } from '@/hooks/useVolverAlLogin';
 import type { SalaDetalle } from '@/models/SalaAdmin';
 import type { EstadoCarga } from '@/models/Vista';
-import { isAbort, NetworkError } from '@/repositories/http/httpClient';
+import { ApiError, isAbort, NetworkError } from '@/repositories/http/httpClient';
 import {
   adminSalaService,
   SalaNoEncontradaError,
@@ -21,6 +21,18 @@ function mensajeDeCarga(error: unknown): string {
   return 'No se pudo cargar la sala.';
 }
 
+function mensajeDeLiberar(error: unknown): string {
+  if (
+    error instanceof SalaNoEncontradaError ||
+    error instanceof SinPermisoError ||
+    error instanceof NetworkError ||
+    error instanceof ApiError
+  ) {
+    return error.message;
+  }
+  return 'No se pudo liberar la sala.';
+}
+
 /** Detalle de una sala: puzzles, descubrimientos y bitácora. */
 export function useAdminSalaController(id: string, service: AdminSalaService = adminSalaService) {
   const volverAlLogin = useVolverAlLogin();
@@ -28,6 +40,8 @@ export function useAdminSalaController(id: string, service: AdminSalaService = a
   const [estado, setEstado] = useState<EstadoCarga>('cargando');
   const [errorCarga, setErrorCarga] = useState<string>();
   const [vuelta, setVuelta] = useState(0);
+  const [liberando, setLiberando] = useState(false);
+  const [errorLiberar, setErrorLiberar] = useState<string>();
 
   useEffect(() => {
     const control = new AbortController();
@@ -47,10 +61,31 @@ export function useAdminSalaController(id: string, service: AdminSalaService = a
     return () => control.abort();
   }, [service, id, vuelta, volverAlLogin]);
 
+  /** Libera la sala y recarga su detalle; devuelve `true` si se liberó. */
+  const liberar = useCallback(async () => {
+    setLiberando(true);
+    setErrorLiberar(undefined);
+    try {
+      await service.liberarSala(id);
+      setVuelta((actual) => actual + 1);
+      return true;
+    } catch (error) {
+      if (error instanceof SesionVencidaError) volverAlLogin();
+      else setErrorLiberar(mensajeDeLiberar(error));
+      return false;
+    } finally {
+      setLiberando(false);
+    }
+  }, [service, id, volverAlLogin]);
+
   return {
     sala,
     estado,
     errorCarga,
+    liberando,
+    errorLiberar,
+    liberar,
+    limpiarErrorLiberar: () => setErrorLiberar(undefined),
     recargar: () => {
       setEstado('cargando');
       setVuelta((actual) => actual + 1);
