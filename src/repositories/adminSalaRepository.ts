@@ -18,6 +18,11 @@ export interface AdminSalaRepository {
   findPage(consulta: ConsultaSalas, token: string, signal?: AbortSignal): Promise<PaginaSalasDto>;
   /** 404 si no existe; 400 si el id no es un UUID. */
   findById(id: string, token: string, signal?: AbortSignal): Promise<SalaAdminDto>;
+  /**
+   * `DELETE`: pasa la sala a `finalizada` (no borra nada), cierra el juego y la app y libera el
+   * pueblo. `204`; también si la sala ya había terminado. 404 si no existe; 400 si no es un UUID.
+   */
+  close(id: string, token: string): Promise<void>;
 }
 
 export const httpAdminSalaRepository: AdminSalaRepository = {
@@ -38,5 +43,12 @@ export const httpAdminSalaRepository: AdminSalaRepository = {
       signal,
     });
     return data;
+  },
+
+  async close(id, token) {
+    await request<null>(`${SALAS}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: bearer(token),
+    });
   },
 };

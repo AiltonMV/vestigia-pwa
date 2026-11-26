@@ -18,10 +18,23 @@ export class SalaNoEncontradaError extends Error {
   }
 }
 
+async function traducirNoEncontrada<T>(accion: () => Promise<T>): Promise<T> {
+  try {
+    return await accion();
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
+      throw new SalaNoEncontradaError();
+    }
+    throw error;
+  }
+}
+
 /** Requiere una sesión de administrador; sin ella lanza `SesionVencidaError`. */
 export interface AdminSalaService {
   getSalas(filtro: FiltroSala, pagina: number, signal?: AbortSignal): Promise<Pagina<SalaResumen>>;
   getSala(id: string, signal?: AbortSignal): Promise<SalaDetalle>;
+  /** Libera la sala: queda `finalizada` y su pueblo vuelve a estar libre. */
+  liberarSala(id: string): Promise<void>;
 }
 
 export function createAdminSalaService(
@@ -41,14 +54,13 @@ export function createAdminSalaService(
     },
 
     async getSala(id, signal) {
-      try {
-        return toSalaDetalle(await sesion.conToken((token) => salas.findById(id, token, signal)));
-      } catch (error) {
-        if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
-          throw new SalaNoEncontradaError();
-        }
-        throw error;
-      }
+      return traducirNoEncontrada(async () =>
+        toSalaDetalle(await sesion.conToken((token) => salas.findById(id, token, signal))),
+      );
+    },
+
+    async liberarSala(id) {
+      return traducirNoEncontrada(() => sesion.conToken((token) => salas.close(id, token)));
     },
   };
 }

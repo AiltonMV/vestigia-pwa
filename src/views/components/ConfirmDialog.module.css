@@ -1,0 +1,54 @@
+.dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 26px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-charcoal);
+  color: var(--color-text);
+}
+
+.dialog::backdrop {
+  background: rgb(0 15 32 / 0.75);
+}
+
+.titulo {
+  margin: 0 0 12px;
+  font: 500 var(--step-1) / 1.2 var(--font-serif);
+  color: var(--color-ivory);
+}
+
+.cuerpo {
+  display: grid;
+  gap: 8px;
+  font: 400 var(--step-0) / 1.5 var(--font-serif);
+  color: var(--color-mist);
+}
+
+.cuerpo p {
+  margin: 0;
+}
+
+.error {
+  margin: 14px 0 0;
+  color: rgb(255 120 100);
+  font: 400 var(--step--1) / 1.4 var(--font-sans);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.acciones button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.secundario {
+  border-color: var(--color-mist);
+  background: transparent;
+  color: var(--color-ivory);
+}
