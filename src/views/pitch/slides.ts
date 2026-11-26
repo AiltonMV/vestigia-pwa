@@ -1,3 +1,5 @@
+import type { FotoId } from './fotos';
+
 /**
  * The pitch, slide by slide. Each step is one press of → : it moves the 3D scene to `p` (story
  * progress, see `views/story/timeline.ts`) and reveals the beats whose `at` it has reached.
@@ -47,11 +49,22 @@ export type SlideContent =
   | { kind: 'logo'; tagline: string; chips: string[] }
   | { kind: 'loop'; title: string; clues: Beat<Clue>[]; compass: Compass }
   | { kind: 'libreta'; lines: Line[]; screens: Beat<{ id: PhoneCapture }>[] }
-  | { kind: 'arte'; title: string; pieces: string[]; note: string }
-  | { kind: 'estado'; stats: Beat<Stat>[]; claim: string; team: Line }
-  | { kind: 'cta'; title: string; sign: string };
+  | { kind: 'arte'; title: string; pieces: Piece[]; note: string }
+  | { kind: 'estado'; stats: Beat<Stat>[]; claim: string }
+  | { kind: 'cta'; title: string; sign: string }
+  | { kind: 'trailer'; src: string };
 
 export type SlideKind = SlideContent['kind'];
+
+/**
+ * A polaroid of "El mundo": its photos take turns, and `inset` lays the phone's side of the same
+ * moment over them (the PC and the notebook, one story on two screens).
+ */
+export interface Piece {
+  label: string;
+  photos: FotoId[];
+  inset?: FotoId;
+}
 
 /** A slide's own animated prop, each taken from a mechanic of the game. */
 export type DetailKind = 'radio' | 'photo' | 'cutouts';
@@ -96,7 +109,7 @@ export const SLIDES: Slide[] = [
     steps: [{ p: 0.13, cut: true }, { p: 0.17 }],
   },
   {
-    id: 'pueblo',
+    id: 'pcPuebloPlaza',
     kind: 'lines',
     eyebrow: 'El pueblo',
     voice: 'A',
@@ -170,7 +183,17 @@ export const SLIDES: Slide[] = [
     eyebrow: 'El mundo',
     voice: 'A',
     title: 'Una maqueta de cartón y papel.',
-    pieces: ['Escenarios', 'Puzles', 'Continuidad'],
+    pieces: [
+      {
+        label: 'Escenarios',
+        photos: ['pcFaroExterior', 'pcObservatorioInterior', 'pcPuebloPlaza', 'pcFaroInterior'],
+      },
+      {
+        label: 'Puzles',
+        photos: ['movilPuzleRadio', 'movilPuzleFotografia', 'movilPuzleObservatorio'],
+      },
+      { label: 'Continuidad', photos: ['pcPuebloPescador'], inset: 'movilLibretaPescador' },
+    ],
     note: 'Diseñados por el equipo',
     notes:
       'Los escenarios, los puzles y su continuidad los diseñamos nosotros, con una estética de maqueta de cartón y papel. Para los personajes y otros elementos visuales contamos con la colaboración de una ilustradora.',
@@ -181,12 +204,11 @@ export const SLIDES: Slide[] = [
     kind: 'estado',
     eyebrow: 'Hoy',
     voice: 'A',
-    stats: [{ value: '~17 min', label: 'por partida', at: 0 }],
+    stats: [{ value: '~15 min', label: 'por partida', at: 0 }],
     claim: 'Prototipo jugable de principio a fin.',
-    team: { text: 'Quetzal Bytes · UTCH', at: 1 },
     notes:
-      'Hoy tenemos un prototipo jugable de principio a fin, que se recorre en unos diecisiete minutos. [→] Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar.',
-    steps: [{ p: 0.858 }, { p: 0.862 }],
+      'Hoy tenemos un prototipo jugable de principio a fin, que se recorre en unos quince minutos. Somos Quetzal Bytes. Un equipo que cree que algunas personas no se van. Se quedan en lo que dejaron… esperando a que alguien aprenda a mirar.',
+    steps: [{ p: 0.858 }],
   },
   {
     id: 'cta',
@@ -197,6 +219,16 @@ export const SLIDES: Slide[] = [
     sign: 'Abrirla es decisión de ustedes.',
     notes:
       'Lo que Janeth vio esa noche lo dejó escrito. Su libreta está en nuestro stand. Abrirla… es decisión de ustedes.',
+    steps: [{ p: 0.96 }],
+  },
+  {
+    id: 'trailer',
+    kind: 'trailer',
+    eyebrow: 'Tráiler',
+    voice: 'B',
+    // 1080p copy of the 4K / 60 fps master (`trailer_vestigia_4k_60fps.mp4`), ~64 s.
+    src: '/pitch/trailer-vestigia-1080p.mp4',
+    notes: 'El tráiler se reproduce solo y con sonido. Al terminar se queda en su último cuadro.',
     steps: [{ p: 0.96 }],
   },
 ];

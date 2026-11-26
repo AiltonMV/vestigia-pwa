@@ -276,9 +276,13 @@
 
 /* ——— Hook: paper sea cut-outs in front of the maquette, like a toy theatre. ——— */
 
+/* Anchored to the screen's edges, not the 16:9 frame's: the frame is letterboxed and centred,
+   so its bottom floats above the screen's on anything taller than 16:9. */
 .cutouts {
   position: absolute;
-  inset: auto -50cqw 0;
+  right: min(-50cqw, calc((100cqw - 100vw) / 2 - 4cqw));
+  bottom: calc((100cqh - 100vh) / 2);
+  left: min(-50cqw, calc((100cqw - 100vw) / 2 - 4cqw));
   height: 19cqh;
   pointer-events: none;
 }

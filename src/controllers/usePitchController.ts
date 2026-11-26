@@ -21,9 +21,12 @@ function toggleFullscreen() {
  */
 export function usePitchController() {
   const clock = useStoryClock(NO_BEATS);
-  const sound = useAmbientSound(clock);
   const [state, dispatch] = useReducer(pitchReducer, INITIAL_PITCH);
   const { at, from } = state;
+  const stop = STOPS[at];
+  const slide = SLIDES[stop.slide];
+  // The trailer plays with its own sound, so the storm steps aside while it is on.
+  const sound = useAmbientSound(clock, { suspended: slide.kind === 'trailer' });
   const cut = isCut(from, at);
   // Stop whose blackout jump has already happened.
   const [landed, setLanded] = useState(at);
@@ -77,8 +80,6 @@ export function usePitchController() {
     };
   }, [toggleSound]);
 
-  const stop = STOPS[at];
-  const slide = SLIDES[stop.slide];
   const cutting = cut && landed !== at;
   // Until a cut lands, the scene behind the blackout still shows the stop it came from.
   const { turns } = STOPS[cutting ? from : at];
@@ -95,6 +96,6 @@ export function usePitchController() {
     /** The game's camera view of the scene, when the stop on screen asks for it. */
     game: turns === undefined ? null : { turns },
     /** The screen is black: resting screen, presenters' blackout, or the middle of a cut. */
-    dark: state.blackout || cutting || slide.kind === 'reposo',
+    dark: state.blackout || cutting || slide.kind === 'reposo' || slide.kind === 'trailer',
   };
 }

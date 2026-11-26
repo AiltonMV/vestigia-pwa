@@ -59,17 +59,6 @@
   background: currentColor;
 }
 
-.count {
-  position: absolute;
-  right: 6cqw;
-  bottom: 7cqh;
-  margin: 0;
-  font: 600 0.95cqw / 1 var(--font-sans);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.2em;
-  color: var(--ink-soft);
-}
-
 /* Beats: paper that settles, 400–700 ms, no bounce. */
 .beat {
   opacity: 0;
@@ -136,9 +125,10 @@
 }
 
 /* Resting screen: the plain dark behind a window pane. */
+/* The whole screen, not the 16:9 frame: the glass is the screen itself, edge to edge. */
 .reposo {
   position: absolute;
-  inset: 0;
+  inset: calc((100cqh - 100vh) / 2) calc((100cqw - 100vw) / 2);
 }
 
 .glass {
@@ -319,18 +309,14 @@
 }
 
 /* The notebook phone, slid in from the right of the page. */
+/* iPhone 17 Pro mockup (1792 × 3664 source); the capture sits under its transparent screen. */
 .phone {
   position: absolute;
   top: 13cqh;
   right: 13cqw;
   height: 74cqh;
-  aspect-ratio: 9 / 19;
-  padding: 1.1cqh;
-  border-radius: 4.4cqh;
-  background: linear-gradient(150deg, #2b3a47, var(--color-charcoal) 45%, #0b141d);
-  box-shadow:
-    0 0 0 1px rgb(23 33 43 / 0.3),
-    0 4cqh 8cqh -3cqh rgb(23 33 43 / 0.55);
+  aspect-ratio: 1792 / 3664;
+  filter: drop-shadow(0 3cqh 4cqh rgb(23 33 43 / 0.45));
 }
 
 .phone.beat {
@@ -341,23 +327,21 @@
   translate: 0 0;
 }
 
-.island {
+.phoneFrame {
   position: absolute;
-  top: 2.2cqh;
-  left: 50%;
-  z-index: 2;
-  width: 28%;
-  height: 2.2cqh;
-  border-radius: 999px;
-  background: #05090d;
-  translate: -50% 0;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
+/* The screen hole of the mockup, a hair larger so no gap shows under the black bezel. */
 .phoneScreen {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  inset: 2.2% 4.6% 2.2% 5.1%;
   overflow: hidden;
-  border-radius: 3.4cqh;
+  border-radius: 16.8% / 7.9%;
   /* Shows while a capture loads; close to the app's leather and paper tones. */
   background: #2a1a12;
 }
@@ -381,26 +365,30 @@
 }
 
 /* Paper pieces that come together into the model. */
+/* The polaroids, dropped on the table in a loose pile; each later one lands on top. */
 .pieces {
   position: absolute;
-  top: 19cqh;
-  right: 6cqw;
-  display: flex;
-  gap: 1.4cqw;
+  inset: 0;
 }
 
+/* A polaroid: a square photo, and the thick white band below it carries the label. */
 .piece {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  z-index: var(--z);
   display: grid;
-  align-content: space-between;
-  width: 10.8cqw;
-  height: 20cqh;
-  padding: 2.2cqh 1.1cqw;
+  grid-template-rows: auto auto 1fr;
+  gap: 1cqh;
+  width: 15.5cqw;
+  padding: 0.9cqw 0.9cqw 3cqh;
   background: var(--color-ivory);
   color: var(--color-charcoal);
-  font: 600 1.35cqw / 1.1 var(--font-serif);
+  font: 600 1.7cqw / 1.1 var(--font-serif);
   box-shadow:
     0 0 0 1px rgb(23 33 43 / 0.12),
-    0 1.4cqh 3cqh rgb(23 33 43 / 0.28);
+    0 1.2cqh 2.4cqh rgb(23 33 43 / 0.32),
+    0 2.4cqh 5cqh rgb(23 33 43 / 0.18);
   rotate: var(--tilt);
 }
 
@@ -409,16 +397,56 @@
   rotate: var(--from-tilt);
 }
 
+.photo {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #17212b;
+  /* A print, not a screen: slightly warm and soft at the edges. */
+  box-shadow: inset 0 0 1.2cqw rgb(0 0 0 / 0.35);
+}
+
+.photoLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.18) saturate(0.92) brightness(1.18);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.photoShown {
+  opacity: 1;
+}
+
+/* The phone's side of the same moment, held over the PC scene like a second, smaller print. */
+.photoInset {
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  width: 34%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  object-position: top;
+  border: 0.25cqw solid #0b141d;
+  border-radius: 0.6cqw;
+  box-shadow: 0 0.6cqh 1.4cqh rgb(0 0 0 / 0.5);
+  rotate: -4deg;
+}
+
 .pieceIndex {
-  font: 600 0.95cqw / 1 var(--font-sans);
+  margin-top: 0.8cqh;
+  font: 600 1.05cqw / 1 var(--font-sans);
   letter-spacing: 0.2em;
   color: var(--color-rust);
 }
 
 .pieceNote {
   position: absolute;
-  top: 44cqh;
-  right: 6cqw;
+  right: 5cqw;
+  bottom: 4.5cqh;
   font: 600 0.95cqw / 1 var(--font-sans);
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -485,14 +513,16 @@
   color: var(--color-mist);
 }
 
-.team {
-  justify-self: start;
-  margin: 0;
-  padding-right: 6cqw;
-  padding-top: 2.6cqh;
-  border-top: 1px solid var(--rule);
-  font: 600 2.2cqw / 1.2 var(--font-serif);
-  color: var(--ink);
+/* The trailer fills the whole screen (not the 16:9 frame) and fits inside it without cropping
+   or stretching: full width on screens taller than 16:9, full height on wider ones. */
+.trailer {
+  position: absolute;
+  inset: calc((100cqh - 100vh) / 2) calc((100cqw - 100vw) / 2);
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  background: #000;
 }
 
 @media (prefers-reduced-motion: reduce) {

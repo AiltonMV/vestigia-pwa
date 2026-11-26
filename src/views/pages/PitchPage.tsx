@@ -11,7 +11,6 @@ import styles from './PitchPage.module.css';
 const BRAND = 'Vestigia';
 /** Wait before a new slide's text: after the old one leaves, or once the light is back. */
 const ENTER_DELAY_MS = { glide: 380, cut: CUT_MS + 520 };
-const TOTAL = String(SLIDES.length - 1).padStart(2, '0');
 
 const LighthouseCanvas = lazy(() => import('@/views/three/LighthouseCanvas'));
 
@@ -49,11 +48,7 @@ export function PitchPage() {
             className={cx(styles.slide, index === slideIndex && styles.active)}
             aria-hidden={index !== slideIndex}
           >
-            <SlideView
-              slide={slide}
-              step={index === slideIndex ? step : -1}
-              count={index > 0 ? `${String(index).padStart(2, '0')} / ${TOTAL}` : undefined}
-            />
+            <SlideView slide={slide} step={index === slideIndex ? step : -1} />
           </section>
         ))}
       </div>
