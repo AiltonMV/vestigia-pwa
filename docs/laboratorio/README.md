@@ -33,6 +33,8 @@ Se utilizó el puerto 8090 para el backend porque los puertos 8080 y 8081 estaba
 
 Repositorios: [PWA](https://github.com/AiltonMV/vestigia-pwa) y [backend](https://github.com/TheCodeOfGod/vestigia-backend).
 
+Aplicación desplegada en producción: https://vestigia.site (HTTPS). Las pruebas de este laboratorio se hicieron en local, no contra producción.
+
 ## 3. Reproducción del laboratorio
 
 ### 3.1. Preparación

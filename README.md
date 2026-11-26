@@ -3,7 +3,7 @@
 > Preproyecto de **Aplicaciones Web Progresivas** · Grupo IDGS101N · Universidad Tecnológica de Chihuahua
 > Parte del proyecto integrador **Vestigia**, una aventura de misterio para PC con una aplicación móvil complementaria.
 
-**Integrantes:** Ailton Márquez, Raúl Cano, Aldo Alberto, María Jose, Oliver Manríquez, Iram Álvarez · **Repositorio del backend:** https://github.com/TheCodeOfGod/vestigia-backend · **Monorepo del proyecto:** https://github.com/Oliveriswackk/Vestigia
+**Aplicación en producción:** https://vestigia.site (HTTPS) · **Integrantes:** Ailton Márquez, Raúl Cano, Aldo Alberto, María Jose, Oliver Manríquez, Iram Álvarez · **Repositorio del backend:** https://github.com/TheCodeOfGod/vestigia-backend · **Monorepo del proyecto:** https://github.com/Oliveriswackk/Vestigia
 
 ---
 
@@ -103,7 +103,7 @@ Los puzzles son `radio`, `photo`, `lookout` y `observatory`. Las migraciones (Fl
 
 ### Manifiesto
 
-`public/manifest.webmanifest` define el nombre, los íconos (192 y 512 px, incluyendo versión *maskable*), `display: standalone`, y `theme_color` y `background_color` en `#000F20` para que la pantalla de carga coincida con la interfaz.
+El manifiesto se declara en `vite.config.ts` (opción `manifest` de `vite-plugin-pwa`) y el build lo genera como `manifest.webmanifest`. Define el nombre, los íconos de `public/icons/` (192 y 512 px, incluyendo versión *maskable*), `display: standalone`, y `theme_color` y `background_color` en `#000F20` para que la pantalla de carga coincida con la interfaz.
 
 ### Service Worker
 
@@ -123,6 +123,13 @@ Se genera con `vite-plugin-pwa` (Workbox, `registerType: autoUpdate`) y está co
 - **Alta de administradores sin conexión:** si `POST /admin/usuarios` falla por falta de red, se guarda en la cola de IndexedDB (`vestigia` › `usuariosPendientes`) con la contraseña cifrada con AES-GCM (WebCrypto, clave no extraíble). Protege contra leer el volcado de la base, no contra un XSS. Se reenvía en orden al volver la red (evento `online`), al abrir el panel y tras iniciar sesión.
 - Al reenviar: `409 correo_duplicado` cuenta como ya sincronizado y se borra; `400` marca la entrada con error y no se reintenta; `401` o falta de red detienen el envío y la entrada sigue pendiente. Cerrar sesión borra la cola y la clave.
 - Solo se encolan las altas de usuario. Cualquier otra escritura y cerrar salas exigen conexión. No se usa Background Sync: el reenvío ocurre con la app abierta.
+
+**Límites sin conexión**
+
+- La primera visita necesita red para descargar el shell y registrar el Service Worker.
+- Sin red se muestra el shell guardado con el aviso «sin conexión». No hay una pantalla de error aparte.
+- El catálogo de pueblos (`/salas`) abre desde su copia en caché. El panel de administración necesita una sesión iniciada antes (el token vive en `sessionStorage`) y sus datos, salvo las altas de usuario en cola, no se guardan en caché.
+- No hay notificaciones push ni uso de sensores del dispositivo (geolocalización, cámara): el profesor indicó que no se requieren.
 
 ```mermaid
 sequenceDiagram
@@ -205,9 +212,26 @@ Sigue la guía de estilo de Vestigia, con tema oscuro por defecto.
 
 Las fuentes se alojan en la propia app (WOFF2) para que se vean igual sin conexión. El amarillo no se usa como texto sobre fondos claros por su bajo contraste.
 
-## 6. Tecnologías
+## 6. Tecnologías y justificación
 
-React 19 · Vite · TypeScript · React Router · CSS Modules · Three.js (React Three Fiber) · Web Audio · `vite-plugin-pwa` (Workbox) · IndexedDB y WebCrypto · Docker y Nginx · Lighthouse CI · oxlint, Prettier, Husky · Spring Boot y PostgreSQL (backend) · Git y GitHub
+| Herramienta | Para qué se usa | Por qué se eligió |
+|---|---|---|
+| React 19 y TypeScript | Interfaz por componentes y tipos en todo el cliente | Componentes reutilizables y errores de tipos detectados al compilar; los DTOs y modelos reflejan el contrato de la API |
+| Vite | Servidor de desarrollo y build | Compilación rápida, división del código por página (`lazy`) e integración directa con el plugin de PWA |
+| Renderizado en el cliente (CSR) | Cómo se pinta la app | La app es una SPA: la portada 3D y el panel de administración dependen del navegador, y el panel va detrás de una sesión, así que el SEO y el HTML generado en servidor no aportan. El shell se precachea y abre sin red |
+| React Router | Rutas públicas y protegidas | Rutas declarativas, redirección al login y páginas cargadas bajo demanda |
+| CSS Modules | Estilos | Estilos con alcance por componente, sin dependencias extra |
+| Three.js (React Three Fiber) y Web Audio | Escena 3D de la portada y sonido de tormenta | Narrativa visual de la portada y sonido sintetizado, sin archivos de audio que descargar |
+| `vite-plugin-pwa` (Workbox) | Manifiesto, Service Worker y precache | Genera el manifiesto y el Service Worker desde `vite.config.ts` y permite elegir la estrategia por ruta (precache del shell, *NetworkFirst* para pueblos) |
+| IndexedDB | Cola de altas de administrador sin conexión | Almacenamiento persistente del navegador, sin dependencias y disponible con la app abierta |
+| WebCrypto (AES-GCM) | Cifrar la contraseña en la cola | API nativa del navegador; evita guardar contraseñas en claro en IndexedDB |
+| Spring Boot y PostgreSQL | Backend y base de datos | API REST con capas `controller`, `service` y `repository`, migraciones con Flyway y restricciones de integridad en la base |
+| Docker y Nginx | Contenedor de la PWA | Cualquiera del equipo levanta la misma versión sin instalar Node |
+| GitHub Actions y Lighthouse CI | Checks en cada pull request | Detectan que la imagen no compile o que bajen las calificaciones de rendimiento, accesibilidad, buenas prácticas y SEO |
+| oxlint, Prettier y Husky | Calidad del código | Revisan y formatean los archivos que se confirman, antes del commit |
+| Vercel y Railway | Despliegue | Vercel sirve la PWA por HTTPS y reenvía `/api` al backend (`vercel.json`); Railway aloja el backend y PostgreSQL |
+| Lighthouse y OWASP ZAP | Auditorías del laboratorio | Rendimiento, accesibilidad y análisis pasivo de seguridad, con resultados en `docs/laboratorio/` |
+| Git y GitHub | Control de versiones | Ramas y pull requests con revisión antes de integrar a `develop` y `main` |
 
 ## 7. Estructura del proyecto
 
