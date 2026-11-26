@@ -45,7 +45,9 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           // App shell precached; any route falls back to it so /salas opens offline.
-          globPatterns: ['**/*.{js,css,html,woff2,png,svg}'],
+          globPatterns: ['**/*.{js,css,html,woff2,png,svg,webp}'],
+          // Full-size app screenshots (~49 MB) for the pitch: served on demand, never precached.
+          globIgnores: ['capturas-app/**'],
           navigateFallbackDenylist: [/^\/api\//],
           // The 3D landing bundle is large; raise the limit so it is precached too.
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
