@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useVolverAlLogin } from '@/hooks/useVolverAlLogin';
 import type { ErroresDeUsuario, NuevoUsuario, Usuario } from '@/models/Usuario';
 import type { Aviso, EstadoCarga } from '@/models/Vista';
@@ -9,12 +9,13 @@ import {
   usuarioService,
   type UsuarioService,
 } from '@/services/usuarioService';
+import { usePendientesUsuarios } from './usePendientesUsuarios';
 
 function mensajeDeError(error: unknown): string {
   if (error instanceof UsuarioInvalidoError || error instanceof SinPermisoError) {
     return error.message;
   }
-  if (error instanceof NetworkError) return 'Necesitas conexión para guardar el usuario.';
+  if (error instanceof NetworkError) return 'No se pudo guardar el usuario. Intenta de nuevo.';
   return 'El servidor no pudo guardar el usuario. Intenta de nuevo.';
 }
 
@@ -31,6 +32,8 @@ export function useUsuariosController(service: UsuarioService = usuarioService) 
   const [errorCarga, setErrorCarga] = useState<string>();
   const [aviso, setAviso] = useState<Aviso>();
   const [guardando, setGuardando] = useState(false);
+  const { pendientes, sincronizando } = usePendientesUsuarios();
+  const sincronizabaAntes = useRef(sincronizando);
 
   const cargar = useCallback(
     () =>
@@ -53,15 +56,28 @@ export function useUsuariosController(service: UsuarioService = usuarioService) 
     void cargar();
   }, [cargar]);
 
+  // Al terminar de enviar las altas en cola, el listado debe incluirlas.
+  useEffect(() => {
+    if (sincronizabaAntes.current && !sincronizando) void cargar();
+    sincronizabaAntes.current = sincronizando;
+  }, [sincronizando, cargar]);
+
   /** Devuelve los errores por campo, o `null` si se guardó. */
   const guardar = useCallback(
     async (datos: NuevoUsuario): Promise<ErroresDeUsuario | null> => {
       setGuardando(true);
       try {
-        const usuario = await service.createUsuario(datos);
+        const resultado = await service.createUsuario(datos);
+        if (resultado.tipo === 'encolado') {
+          setAviso({
+            tono: 'info',
+            texto: `Sin conexión: «${resultado.pendiente.nombre}» quedó guardado en este dispositivo y se enviará al volver la red.`,
+          });
+          return null;
+        }
         // El backend lista del más antiguo al más nuevo: el nuevo va al final.
-        setUsuarios((actuales) => [...actuales, usuario]);
-        setAviso({ tono: 'exito', texto: `Usuario «${usuario.nombre}» agregado.` });
+        setUsuarios((actuales) => [...actuales, resultado.usuario]);
+        setAviso({ tono: 'exito', texto: `Usuario «${resultado.usuario.nombre}» agregado.` });
         return null;
       } catch (error) {
         if (error instanceof SesionVencidaError) {
@@ -79,6 +95,7 @@ export function useUsuariosController(service: UsuarioService = usuarioService) 
 
   return {
     usuarios,
+    pendientes,
     estado,
     errorCarga,
     guardando,
