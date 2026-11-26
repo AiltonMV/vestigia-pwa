@@ -1,5 +1,6 @@
 const DB_NAME = 'vestigia';
-const DB_VERSION = 1;
+/** Subir la versión cada vez que cambien los almacenes: `onupgradeneeded` solo corre con una versión mayor. */
+const DB_VERSION = 2;
 
 export const STORE_USUARIOS_PENDIENTES = 'usuariosPendientes';
 export const STORE_CLAVES = 'clavesCifrado';
@@ -11,8 +12,12 @@ function abrir(): Promise<IDBDatabase> {
     const apertura = indexedDB.open(DB_NAME, DB_VERSION);
     apertura.onupgradeneeded = () => {
       const db = apertura.result;
-      db.createObjectStore(STORE_USUARIOS_PENDIENTES, { keyPath: 'id' });
-      db.createObjectStore(STORE_CLAVES);
+      // La base `vestigia` ya existía en la versión 1 con otros almacenes (`salasPendientes`): se crean solo los
+      // que faltan y se conserva lo demás.
+      if (!db.objectStoreNames.contains(STORE_USUARIOS_PENDIENTES)) {
+        db.createObjectStore(STORE_USUARIOS_PENDIENTES, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_CLAVES)) db.createObjectStore(STORE_CLAVES);
     };
     apertura.onsuccess = () => resolve(apertura.result);
     apertura.onerror = () => reject(apertura.error);
