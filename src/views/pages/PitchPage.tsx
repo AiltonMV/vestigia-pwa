@@ -16,7 +16,7 @@ const LighthouseCanvas = lazy(() => import('@/views/three/LighthouseCanvas'));
 
 /** Elevator pitch presented live over the landing's 3D scene; driven by the keyboard. */
 export function PitchPage() {
-  const { clock, sound, state, slideIndex, step, cut, dark, game } = usePitchController();
+  const { clock, sound, state, slide, slideIndex, step, cut, dark, game } = usePitchController();
   const page = useRef<HTMLDivElement>(null);
   const [webgl] = useState(supportsWebGL2);
   useInkTheme(clock, page);
@@ -30,7 +30,13 @@ export function PitchPage() {
       <div className={styles.scene} aria-hidden>
         {webgl && (
           <Suspense fallback={null}>
-            <LighthouseCanvas clock={clock} title={BRAND} game={game} />
+            <LighthouseCanvas
+              clock={clock}
+              title={BRAND}
+              game={game}
+              // The trailer covers the screen: the 3D scene stops so the video plays smoothly.
+              paused={slide.kind === 'trailer'}
+            />
           </Suspense>
         )}
       </div>

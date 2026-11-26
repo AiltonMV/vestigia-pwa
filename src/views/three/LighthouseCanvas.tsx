@@ -12,20 +12,27 @@ const CAMERA = {
   position: [0, 2.6, 21.5] as [number, number, number],
 };
 
-/** Renders the scene from the story clock's loop instead of R3F's own. */
-function ClockDriver({ clock, onReady }: { clock: StoryClock; onReady?: () => void }) {
+interface ClockDriverProps {
+  clock: StoryClock;
+  onReady?: () => void;
+  paused?: boolean;
+}
+
+/** Renders the scene from the story clock's loop instead of R3F's own; `paused` skips frames. */
+function ClockDriver({ clock, onReady, paused = false }: ClockDriverProps) {
   const advance = useThree((state) => state.advance);
 
   useEffect(() => {
     let first = true;
     return clock.onRender((frame) => {
+      if (paused && !first) return;
       advance(frame.time);
       if (first) {
         first = false;
         onReady?.();
       }
     });
-  }, [clock, advance, onReady]);
+  }, [clock, advance, onReady, paused]);
 
   return null;
 }
@@ -33,10 +40,12 @@ function ClockDriver({ clock, onReady }: { clock: StoryClock; onReady?: () => vo
 interface LighthouseCanvasProps extends LighthouseSceneProps {
   /** Called once the first frame has been drawn. */
   onReady?: () => void;
+  /** Stops drawing while something else fills the screen (the pitch's trailer), freeing the GPU. */
+  paused?: boolean;
 }
 
 /** Default export so the whole Three.js bundle can be loaded lazily. */
-export default function LighthouseCanvas({ onReady, ...scene }: LighthouseCanvasProps) {
+export default function LighthouseCanvas({ onReady, paused, ...scene }: LighthouseCanvasProps) {
   return (
     <Canvas
       frameloop="never"
@@ -51,7 +60,7 @@ export default function LighthouseCanvas({ onReady, ...scene }: LighthouseCanvas
     >
       <Suspense fallback={null}>
         <LighthouseScene {...scene} />
-        <ClockDriver clock={scene.clock} onReady={onReady} />
+        <ClockDriver clock={scene.clock} onReady={onReady} paused={paused} />
       </Suspense>
     </Canvas>
   );
