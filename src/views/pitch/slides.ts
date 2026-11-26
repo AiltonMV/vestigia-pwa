@@ -38,15 +38,15 @@ export interface Compass {
   headings: string[];
 }
 
-/** A screen of `views/libreta/PhoneScreens.tsx`. */
-export type PhoneScreenId = 'libreta' | 'burbuja';
+/** A real screenshot of the notebook app, from `views/libreta/capturas.ts`. */
+export type PhoneCapture = 'pista' | 'libreta';
 
 export type SlideContent =
   | { kind: 'reposo' }
   | { kind: 'lines'; lines: Line[] }
   | { kind: 'logo'; tagline: string; chips: string[] }
   | { kind: 'loop'; title: string; clues: Beat<Clue>[]; compass: Compass }
-  | { kind: 'libreta'; lines: Line[]; screens: Beat<{ id: PhoneScreenId }>[] }
+  | { kind: 'libreta'; lines: Line[]; screens: Beat<{ id: PhoneCapture }>[] }
   | { kind: 'arte'; title: string; pieces: string[]; note: string }
   | { kind: 'estado'; stats: Beat<Stat>[]; claim: string; team: Line }
   | { kind: 'cta'; title: string; sign: string };
@@ -155,8 +155,9 @@ export const SLIDES: Slide[] = [
       { text: 'Lo que resuelvas aquí abre el camino allá.', small: true, at: 1 },
     ],
     screens: [
-      { id: 'libreta', at: 0 },
-      { id: 'burbuja', at: 1 },
+      // A clue waits in the notebook, then the PC has moved it along and a photo turned up.
+      { id: 'pista', at: 0 },
+      { id: 'libreta', at: 1 },
     ],
     detail: { kind: 'photo', at: 1 },
     notes:

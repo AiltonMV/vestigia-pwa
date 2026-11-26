@@ -1,5 +1,5 @@
 import { useState, type ComponentType, type CSSProperties, type ReactNode } from 'react';
-import { PhoneScreen } from '@/views/libreta/PhoneScreens';
+import { CAPTURAS } from '@/views/libreta/capturas';
 import { cx } from '@/views/utils/cx';
 import { ClueIconSvg } from './ClueIcons';
 import { GlassDrops } from './GlassDrops';
@@ -161,10 +161,14 @@ function Libreta({ slide, step }: ViewProps<'libreta'>) {
         <span className={styles.island} />
         <div className={styles.phoneScreen}>
           {screen && (
-            // The key remounts the screen so its own animation plays at each step.
-            <div key={screen.id} className={styles.phoneLayer}>
-              <PhoneScreen id={screen.id} />
-            </div>
+            // The key remounts the image so it slides in again at each step.
+            <img
+              key={screen.id}
+              className={styles.phoneLayer}
+              src={CAPTURAS[screen.id]}
+              alt=""
+              decoding="async"
+            />
           )}
         </div>
       </Reveal>

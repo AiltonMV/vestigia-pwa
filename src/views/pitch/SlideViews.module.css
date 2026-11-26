@@ -354,18 +354,22 @@
 }
 
 .phoneScreen {
-  /* PhoneScreens sizes its text in cqw of this screen. */
-  container-type: size;
   position: relative;
   height: 100%;
   overflow: hidden;
   border-radius: 3.4cqh;
-  background: var(--color-paper);
+  /* Shows while a capture loads; close to the app's leather and paper tones. */
+  background: #2a1a12;
 }
 
+/* A real screenshot, a bit taller than the frame: only the gesture bar at the bottom is cropped. */
 .phoneLayer {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
   animation: screenIn 0.5s ease both;
 }
 
