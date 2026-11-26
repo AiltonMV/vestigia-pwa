@@ -1,0 +1,18 @@
+ total_pueblos
+---------------
+           101
+
+ nombre                | correo              | rol   | activo | creado_en
+-----------------------+---------------------+-------+--------+-------------------------------
+ Administrador         | admin@vestigia.site | admin | t      | 2026-11-26 16:47:12+00
+ Usuario Laboratorio 1 | lab1@lab.test       | admin | t      | 2026-11-26 16:47:54+00
+ Usuario Laboratorio 2 | lab2@lab.test       | admin | t      | 2026-11-26 16:48:40+00
+
+ correo        | rol   | activo | longitud_hash | prefijo_hash
+---------------+-------+--------+---------------+--------------
+ lab1@lab.test | admin | t      |            60 | $2a$
+ lab2@lab.test | admin | t      |            60 | $2a$
+
+ correo | cantidad
+--------+----------
+(0 filas: sin correos duplicados)

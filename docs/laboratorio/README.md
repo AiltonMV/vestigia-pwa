@@ -54,8 +54,7 @@ Desde `vestigia-backend`, configurar las variables `ADMIN_BOOTSTRAP_EMAIL` y `AD
 
 ```powershell
 $env:SERVER_PORT = "8090"
-$env:LOGGING_LEVEL_ORG_HIBERNATE_SQL = "DEBUG"
-$env:LOGGING_LEVEL_ORG_HIBERNATE_ORM_JDBC_BIND = "TRACE"
+$env:SPRING_APPLICATION_JSON = '{"logging.level.org.hibernate.SQL":"DEBUG","logging.level.org.hibernate.orm.jdbc.bind":"TRACE"}'
 $env:MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE = "health,metrics"
 $env:LOGGING_FILE_NAME = "logs/vestigia-backend.log"
 .\mvnw.cmd spring-boot:run
@@ -67,7 +66,7 @@ En otra terminal:
 curl.exe http://localhost:8090/actuator/health
 ```
 
-Resultado esperado: `status: UP`. Los logs completos de Hibernate pueden contener información sensible: no se deben adjuntar sin revisión.
+Resultado esperado: `status: UP`. `LOGGING_LEVEL_ORG_HIBERNATE_SQL` no activa el SQL, porque el logger se llama `org.hibernate.SQL` y la variable de entorno lo convierte a minúsculas; por eso se usa `SPRING_APPLICATION_JSON`. Los logs completos de Hibernate pueden contener información sensible: no se deben adjuntar sin revisión.
 
 ### 3.3. PWA (terminal 2)
 
@@ -113,13 +112,13 @@ Los estados distinguen los resultados satisfactorios (✅), los fallos observado
 | C01 | Estado inicial: consultas SQL antes del alta | 101 pueblos, un administrador activo, cero salas | Estado validado; ejecución de `00_estado_inicial.sql` no acreditada | `evidencias/db/C01-antes.png`, `evidencias/db/C01-salas.png` |
 | C02 | GET y renderizado: abrir `/salas` en línea e inspeccionar Network | 101 pueblos, HTTP 200, JSON de 3524 B, 417.06 ms en navegador | ✅ Pasó | `evidencias/frontend/C02-listado.png`, `evidencias/devtools/C02-network.png`, `C02-headers.png`, `C02-timing.png`, `C02-console.png`, log |
 | C03 | Application: Service Worker y Cache Storage | `sw.js` activo, `workbox-precache-v2`, `api-pueblos` con los 101 registros | ✅ Pasó | `evidencias/devtools/C03-sw.png`, `C03-cache.png` |
-| C04 | POST online: alta de `lab1@lab.test` | HTTP 201, registro persistido, 2060 ms en log | ✅ Pasó funcionalmente; línea SQL INSERT no acreditada en el extracto | `evidencias/frontend/C04-alta.png`, `evidencias/devtools/C04-network.png`, `C04-timing.png`, `evidencias/backend/C04-log.png`, C05, log |
+| C04 | POST online: alta de `lab1@lab.test` | HTTP 201, registro persistido, 2060 ms en log | ✅ Pasó; la línea SQL `INSERT` está en `evidencias/verificacion-adicional/C04-log-sql.txt` | `evidencias/frontend/C04-alta.png`, `evidencias/devtools/C04-network.png`, `C04-timing.png`, `evidencias/backend/C04-log.png`, C05, log |
 | C05 | Ejecutar `02_consulta_despues.sql` | Dos usuarios, hash de 60 caracteres con prefijo `$2a$`, sin duplicados | ✅ Pasó | `evidencias/db/C05-despues.png` |
 | C06 | Repetir alta de `lab1@lab.test` | HTTP 409 en 471 ms; una sola fila para ese correo en consulta final | ✅ Pasó funcionalmente | `evidencias/devtools/C06-network.png`, `evidencias/db/C06-sin-duplicado.png`, log y C11 |
-| C07 | Intentar alta con contraseña de tres caracteres | El usuario de validación no figura en C11; el mensaje de validación o HTTP 400 no se pudo acreditar con el material revisado | Pendiente de acreditar | `evidencias/frontend/C07.png`, `evidencias/devtools/C07-network.png`, `evidencias/backend/C07-validacion.png` |
+| C07 | Intentar alta con contraseña de tres caracteres | El formulario bloquea el envío y muestra «De 8 a 72 caracteres»; la petición no llega al servidor, por eso no hay HTTP 400 y el usuario de validación no figura en C11 | ✅ Pasó (validación del cliente) | `evidencias/frontend/C07.png`, `evidencias/devtools/C07-network.png`, `evidencias/backend/C07-validacion.png` |
 | C08 | Activar Offline y recargar `/salas` | 101 pueblos visibles y aviso de desconexión; petición de red fallida y respuesta de caché coherente con C03 | ✅ Pasó funcionalmente; respuesta del SW no acreditada en la captura revisada | `evidencias/frontend/C08-offline.png`, `evidencias/devtools/C08-network.png` |
-| C09 | Alta de `lab2@lab.test` sin red | Perfil previo: `NotFoundError`; perfil privado limpio: un registro pendiente con `passwordCifrada` | ❌ Falló con almacenamiento previo; ✅ pasó en perfil limpio | `evidencias/devtools/C09-estructura-indexeddb.png`, `C09-indexeddb.png`; captura del aviso de alta offline (disponible por separado) |
-| C10 | Quitar Offline con la PWA abierta | POST HTTP 201 a las 03:08:38, 1499 ms; C11 confirma persistencia | ✅ Envío confirmado; automatismo, contador cero y cola vacía no acreditados en el material revisado | `evidencias/devtools/C10-network.png`, `evidencias/frontend/C10-indexeddb-vacia.png`, log y C11 |
+| C09 | Alta de `lab2@lab.test` sin red | Perfil previo: `NotFoundError`; perfil privado limpio: un registro pendiente con `passwordCifrada` | ❌ Falló con almacenamiento previo; ✅ pasó en perfil limpio | `evidencias/devtools/C09-estructura-indexeddb.png`, `C09-indexeddb.png`; aviso de alta pendiente y contenido de la cola en `evidencias/verificacion-adicional/` (sección 11) |
+| C10 | Quitar Offline con la PWA abierta | POST HTTP 201 a las 03:08:38, 1499 ms; C11 confirma persistencia | ✅ Envío confirmado; contador en cero y cola vacía acreditados en la verificación adicional (sección 11) | `evidencias/devtools/C10-network.png`, `evidencias/verificacion-adicional/C10-contador-en-cero.png` y `C10-indexeddb-vacia.json`, log y C11. Nota: `evidencias/frontend/C10-indexeddb-vacia.png` muestra la lista de usuarios, no IndexedDB |
 | C11 | Ejecutar `02_consulta_despues.sql` tras reconexión | Tres usuarios, `lab1` y `lab2` una vez cada uno, ambos hashes de 60 caracteres y prefijo `$2a$`; unicidad por correo confirmada en las filas mostradas | ✅ Pasó | `evidencias/db/C11-final.png` |
 | C12 | Ejecutar limpieza y consulta inicial | `DELETE 2`, `COMMIT`, cero usuarios de prueba; 101 pueblos y solo el administrador inicial | ✅ Pasó | `evidencias/db/C12-limpio.png` |
 
@@ -270,6 +269,7 @@ docs/laboratorio/
     frontend/
     devtools/
     seguridad/
+    verificacion-adicional/
 ```
 
 ## 10. Fuentes
@@ -278,3 +278,15 @@ docs/laboratorio/
 - `logs/backend-pruebas.log`, registros Spring Boot de la misma fecha.
 - Auditoría Lighthouse inicial y reporte HTML OWASP ZAP 2.17.0.
 - [metricas-produccion.md](metricas-produccion.md), referencias a los informes del backend de los días 09/11/2026 y 16/11/2026.
+
+## 11. Evidencias adicionales y correcciones
+
+Tras la revisión de la rama se agregaron `evidencias/verificacion-adicional/` (ver su [README](evidencias/verificacion-adicional/README.md) para la procedencia, versiones y límites del método) y se hicieron estos cambios:
+
+- Se eliminaron los archivos del primer laboratorio, que ya no corresponden al esquema actual: `Laboratorio_de_pruebas_PWA_Evidencias.pdf`, `sql/00_create_database.sql`, `sql/01_schema.sql`, `sql/02_seed.sql` y `sql/99_clean.sql` (este último ejecutaba `TRUNCATE salas`).
+- C04: log con las líneas SQL de la inserción.
+- C07: resultado aclarado como validación del cliente.
+- C09 y C10: aviso de pendiente, contenido de la cola cifrada, contador en cero y cola vacía tras la sincronización.
+- Instrucción de log SQL corregida (sección 3.2).
+- **Pendiente:** registrar el SHA del backend usado en las pruebas originales (`git rev-parse HEAD` en la copia local del backend). Las evidencias adicionales usaron `22fd17f` de `origin/develop`.
+- **Pendiente:** BUG-001 (migración de IndexedDB) sigue abierto en el código.

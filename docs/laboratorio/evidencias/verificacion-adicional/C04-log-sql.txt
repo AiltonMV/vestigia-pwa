@@ -1,0 +1,16 @@
+2026-11-26T10:49:48.678-06:00 DEBUG 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.SQL                        : select sam1_0.token_hash,sam1_0.creada_en,sam1_0.expira_en,sam1_0.usuario_id from sesiones_admin sam1_0 where sam1_0.token_hash=?
+2026-11-26T10:49:48.678-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:CHAR) <- [hash de token omitido]
+2026-11-26T10:49:48.682-06:00 DEBUG 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.SQL                        : select um1_0.id,um1_0.activo,um1_0.correo,um1_0.creado_en,um1_0.nombre,um1_0.password_hash,um1_0.rol from usuarios um1_0 where um1_0.id=?
+2026-11-26T10:49:48.682-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [892d830a-7254-4ec0-ae55-383f6c0f2db9]
+2026-11-26T10:49:48.725-06:00 DEBUG 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.SQL                        : select um1_0.id from usuarios um1_0 where um1_0.correo=? fetch first ? rows only
+2026-11-26T10:49:48.725-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [lab4@lab.test]
+2026-11-26T10:49:48.725-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [1]
+2026-11-26T10:49:48.824-06:00 DEBUG 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.SQL                        : insert into usuarios (activo,correo,creado_en,nombre,password_hash,rol,id) values (?,?,?,?,?,?,?)
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:BOOLEAN) <- [true]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (2:VARCHAR) <- [lab4@lab.test]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (3:TIMESTAMP_UTC) <- [2026-11-26T16:49:48.813968Z]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (4:VARCHAR) <- [Usuario Laboratorio 4]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [[hash BCrypt omitido]]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (6:VARCHAR) <- [admin]
+2026-11-26T10:49:48.825-06:00 TRACE 37377 --- [vestigia] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (7:UUID) <- [356dc900-65f1-48ab-b530-44559c8e6045]
+2026-11-26T10:49:48.844-06:00  INFO 37377 --- [vestigia] [http-nio-8080-exec-2] c.vestigia.config.RequestLoggingFilter   : [API] POST /api/v1/admin/usuarios -> 201 | 182 ms
