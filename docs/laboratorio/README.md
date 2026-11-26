@@ -117,7 +117,7 @@ Los estados distinguen los resultados satisfactorios (✅), los fallos observado
 | C06 | Repetir alta de `lab1@lab.test` | HTTP 409 en 471 ms; una sola fila para ese correo en consulta final | ✅ Pasó funcionalmente | `evidencias/devtools/C06-network.png`, `evidencias/db/C06-sin-duplicado.png`, log y C11 |
 | C07 | Intentar alta con contraseña de tres caracteres | El formulario bloquea el envío y muestra «De 8 a 72 caracteres»; la petición no llega al servidor, por eso no hay HTTP 400 y el usuario de validación no figura en C11 | ✅ Pasó (validación del cliente) | `evidencias/frontend/C07.png`, `evidencias/devtools/C07-network.png`, `evidencias/backend/C07-validacion.png` |
 | C08 | Activar Offline y recargar `/salas` | 101 pueblos visibles y aviso de desconexión; petición de red fallida y respuesta de caché coherente con C03 | ✅ Pasó funcionalmente; respuesta del SW no acreditada en la captura revisada | `evidencias/frontend/C08-offline.png`, `evidencias/devtools/C08-network.png` |
-| C09 | Alta de `lab2@lab.test` sin red | Perfil previo: `NotFoundError`; perfil privado limpio: un registro pendiente con `passwordCifrada` | ❌ Falló con almacenamiento previo; ✅ pasó en perfil limpio | `evidencias/devtools/C09-estructura-indexeddb.png`, `C09-indexeddb.png`; aviso de alta pendiente y contenido de la cola en `evidencias/verificacion-adicional/` (sección 11) |
+| C09 | Alta de `lab2@lab.test` sin red | Perfil previo: `NotFoundError`; perfil privado limpio: un registro pendiente con `passwordCifrada` | ❌ Falló con almacenamiento previo; ✅ pasó en perfil limpio; ✅ pasó con almacenamiento previo tras la corrección (BUG-001, PR #30) | `evidencias/devtools/C09-estructura-indexeddb.png`, `C09-indexeddb.png`, `C09-migracion-corregida.png`; aviso de alta pendiente y contenido de la cola en `evidencias/verificacion-adicional/` (sección 11) |
 | C10 | Quitar Offline con la PWA abierta | POST HTTP 201 a las 03:08:38, 1499 ms; C11 confirma persistencia | ✅ Envío confirmado; contador en cero y cola vacía acreditados en la verificación adicional (sección 11) | `evidencias/devtools/C10-network.png`, `evidencias/verificacion-adicional/C10-contador-en-cero.png` y `C10-indexeddb-vacia.json`, log y C11. Nota: `evidencias/frontend/C10-indexeddb-vacia.png` muestra la lista de usuarios, no IndexedDB |
 | C11 | Ejecutar `02_consulta_despues.sql` tras reconexión | Tres usuarios, `lab1` y `lab2` una vez cada uno, ambos hashes de 60 caracteres y prefijo `$2a$`; unicidad por correo confirmada en las filas mostradas | ✅ Pasó | `evidencias/db/C11-final.png` |
 | C12 | Ejecutar limpieza y consulta inicial | `DELETE 2`, `COMMIT`, cero usuarios de prueba; 101 pueblos y solo el administrador inicial | ✅ Pasó | `evidencias/db/C12-limpio.png` |
@@ -140,8 +140,8 @@ La tabla `usuarios` tiene la restricción única `usuarios_correo_unico`. Las co
 - **Diagnóstico:** el perfil previo contenía la BD `vestigia`, versión 1, con el único almacén `salasPendientes`. La implementación nueva requiere `usuariosPendientes` y `clavesCifrado` y también usa la versión 1. Al no aumentar la versión, no se ejecuta la creación de los almacenes faltantes.
 - **Reproducción:** actualizar desde un perfil que conserve esa estructura anterior, entrar al dashboard con sesión válida, simular Offline e intentar un alta válida.
 - **Prueba alternativa:** en una ventana privada se creó una BD nueva con los dos almacenes requeridos; se guardó un usuario pendiente y la propiedad `passwordCifrada` contenía un `ArrayBuffer` de 29 bytes y un IV de 12 bytes, sin contraseña visible en texto claro. El código revisado usa AES-GCM de 256 bits con una clave no extraíble. Esto no prueba resistencia frente a XSS.
-- **Propuesta:** implementar una migración no destructiva de IndexedDB, incrementando la versión y creando solo los almacenes faltantes. Validar tanto instalaciones nuevas como actualizaciones. No se implementó esta corrección durante el laboratorio.
-- **Estado:** reproducido, con alternativa temporal de perfil limpio; corrección permanente pendiente.
+- **Propuesta:** implementar una migración no destructiva de IndexedDB, incrementando la versión y creando solo los almacenes faltantes. Validar tanto instalaciones nuevas como actualizaciones. No se implementó durante el laboratorio; se corrigió después en el PR #30 (`DB_VERSION` pasa a 2 y se crean solo los almacenes que faltan).
+- **Estado:** corregido en `develop` (PR #30, commit `0d86c33`) y comprobado en el navegador normal que reprodujo el fallo: la base `vestigia` pasa a versión 2 con 3 almacenes (`clavesCifrado`, `salasPendientes`, `usuariosPendientes`) y el alta de `lab3@lab.test` sin conexión queda pendiente. Evidencia: `evidencias/devtools/C09-migracion-corregida.png`.
 
 ### 5.1. Evidencia y compatibilidad entre versiones
 
@@ -149,6 +149,7 @@ La tabla `usuarios` tiene la restricción única `usuarios_correo_unico`. Las co
 |---|---:|---|---|
 | C09-A: perfil normal con datos previos | 1 | `salasPendientes` | ❌ Falló; no se guardó el alta |
 | C09-B: ventana privada con almacenamiento nuevo | 1 | `clavesCifrado`, `usuariosPendientes` | ✅ Pasó; un registro pendiente cifrado |
+| C09-C: perfil normal con datos previos, tras la corrección | 2 | `clavesCifrado`, `salasPendientes`, `usuariosPendientes` | ✅ Pasó; un registro pendiente (`lab3@lab.test`) |
 
 En el perfil normal, la inspección de `db.objectStoreNames` devolvió `['salasPendientes']`. En el perfil privado, la base inicializada por la versión actual tenía dos almacenes y se observó el registro `lab2@lab.test` en estado `pendiente`. El problema no es una limitación del modo normal del navegador: es una incompatibilidad de esquema persistido entre las dos versiones de la aplicación, que comparten nombre y versión numérica de IndexedDB. Una nueva instalación no reproduce el fallo porque ejecuta `onupgradeneeded` al crear la base. No se borró la base anterior ni se cambió el código para resolverlo.
 
@@ -246,7 +247,7 @@ Evidencias: `evidencias/seguridad/ZAP-Vestigia.html` y `ZAP-alertas.png`. No se 
 
 ## 8. Limitaciones y conclusiones
 
-La integración PWA–API–PostgreSQL permitió consultar 101 pueblos, crear administradores, comprobar persistencia y unicidad y regresar al estado inicial. La consulta offline funcionó y el alta diferida pudo persistirse después de recuperar la conexión en un perfil limpio. Se detectó una incompatibilidad reproducible de IndexedDB en perfiles con almacenamiento anterior; no debe presentarse C09 como aprobado sin condiciones.
+La integración PWA–API–PostgreSQL permitió consultar 101 pueblos, crear administradores, comprobar persistencia y unicidad y regresar al estado inicial. La consulta offline funcionó y el alta diferida pudo persistirse después de recuperar la conexión en un perfil limpio. Se detectó una incompatibilidad reproducible de IndexedDB en perfiles con almacenamiento anterior; se corrigió después con el PR #30 y se comprobó de nuevo en el mismo perfil (C09-C). Los resultados de C09-A y C09-B se conservan porque documentan el fallo original.
 
 Las oportunidades principales son la migración de IndexedDB, la estabilidad visual y la revisión de encabezados HTTP. No se comprobó la eficacia de las mejoras propuestas. Tampoco se evaluaron carga concurrente, cobertura de código, SSR, notificaciones push, APIs físicas ni HTTPS de la PWA publicada durante esta sesión; estas últimas funcionalidades corresponden a otros criterios de la práctica y requieren evidencias independientes si se incluyen en la entrega global.
 
@@ -289,4 +290,4 @@ Tras la revisión de la rama se agregaron `evidencias/verificacion-adicional/` (
 - C09 y C10: aviso de pendiente, contenido de la cola cifrada, contador en cero y cola vacía tras la sincronización.
 - Instrucción de log SQL corregida (sección 3.2).
 - SHA del backend de las pruebas originales registrado en la sección 2: `main` en `6dc7c92`. Las evidencias adicionales usaron un commit distinto y más reciente, `22fd17f` de `origin/develop`, así que ambas series de pruebas no corresponden exactamente a la misma versión del backend.
-- **Pendiente:** BUG-001 (migración de IndexedDB) sigue abierto en el código.
+- BUG-001 (migración de IndexedDB) corregido en `develop` con el PR #30 y verificado en el navegador normal (`evidencias/devtools/C09-migracion-corregida.png`).
