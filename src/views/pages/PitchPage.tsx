@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useRef, useState, type CSSProperties } from 'react';
+import { lazy, Suspense, useRef, useState, type CSSProperties } from 'react';
 import { CUT_MS, usePitchController } from '@/controllers/usePitchController';
 import { useInkTheme } from '@/hooks/useInkTheme';
 import { PresenterNotes } from '@/views/pitch/PresenterNotes';
@@ -20,8 +20,6 @@ export function PitchPage() {
   const { clock, sound, state, slideIndex, step, cut, dark, game } = usePitchController();
   const page = useRef<HTMLDivElement>(null);
   const [webgl] = useState(supportsWebGL2);
-  const [ready, setReady] = useState(false);
-  const handleReady = useCallback(() => setReady(true), []);
   useInkTheme(clock, page);
 
   const enterDelay = { '--enter-delay': `${cut ? ENTER_DELAY_MS.cut : ENTER_DELAY_MS.glide}ms` };
@@ -33,7 +31,7 @@ export function PitchPage() {
       <div className={styles.scene} aria-hidden>
         {webgl && (
           <Suspense fallback={null}>
-            <LighthouseCanvas clock={clock} title={BRAND} game={game} onReady={handleReady} />
+            <LighthouseCanvas clock={clock} title={BRAND} game={game} />
           </Suspense>
         )}
       </div>
@@ -54,7 +52,6 @@ export function PitchPage() {
             <SlideView
               slide={slide}
               step={index === slideIndex ? step : -1}
-              ready={ready}
               count={index > 0 ? `${String(index).padStart(2, '0')} / ${TOTAL}` : undefined}
             />
           </section>

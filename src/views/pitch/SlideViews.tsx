@@ -2,6 +2,7 @@ import { useState, type ComponentType, type CSSProperties, type ReactNode } from
 import { PhoneScreen } from '@/views/libreta/PhoneScreens';
 import { cx } from '@/views/utils/cx';
 import { ClueIconSvg } from './ClueIcons';
+import { GlassDrops } from './GlassDrops';
 import { SlideDetail } from './SlideDetails';
 import type { Compass, Slide, SlideKind } from './slides';
 import styles from './SlideViews.module.css';
@@ -12,8 +13,6 @@ type CssVars = Record<`--${string}`, string | number>;
 interface ViewProps<K extends SlideKind> {
   slide: Extract<Slide, { kind: K }>;
   step: number;
-  /** The 3D scene has drawn its first frame. */
-  ready: boolean;
 }
 
 interface RevealProps {
@@ -38,14 +37,11 @@ function Reveal({ at, step, order = 0, className, vars, children }: RevealProps)
   );
 }
 
-function Reposo({ slide, ready }: ViewProps<'reposo'>) {
+/** Resting screen while the trailer ends: the plain dark, and rain running down the glass. */
+function Reposo({ step }: ViewProps<'reposo'>) {
   return (
     <div className={styles.reposo}>
-      <p className={styles.logo}>{slide.brand}</p>
-      <span className={cx(styles.bar, ready && styles.barDone)}>
-        <i />
-      </span>
-      <p className={styles.message}>{slide.message}</p>
+      <GlassDrops running={step >= 0} className={styles.glass} />
     </div>
   );
 }
@@ -276,7 +272,7 @@ interface SlideViewProps extends ViewProps<SlideKind> {
  * One slide over the scene: a scrim across the whole screen, then a 16:9 frame (sized in `cq*`
  * units, so it scales with any panel) with the eyebrow, the count and the slide's own view.
  */
-export function SlideView({ slide, step, ready, count }: SlideViewProps) {
+export function SlideView({ slide, step, count }: SlideViewProps) {
   const { View, scrim } = SLIDE_VIEWS[slide.kind] as {
     View: ComponentType<ViewProps<SlideKind>>;
     scrim: Scrim;
@@ -292,7 +288,7 @@ export function SlideView({ slide, step, ready, count }: SlideViewProps) {
             <p className={styles.count}>{count}</p>
           </>
         )}
-        <View slide={slide} step={step} ready={ready} />
+        <View slide={slide} step={step} />
       </div>
     </>
   );

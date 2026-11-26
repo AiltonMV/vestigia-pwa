@@ -40,7 +40,7 @@ Cada escena entra lenta (400-700 ms), sin rebotes, con una sola animación prota
 
 | # | Escena | Qué se ve | Animación protagonista | Pasos → |
 |---|---|---|---|---|
-| 0 | Reposo | Pantalla negra con logo pequeño | Parpadeo cálido de lámpara (apagón y luz que se enciende) | 1 |
+| 0 | Reposo | Fondo oscuro liso, sin logo ni texto, como un cristal con lluvia | Gotas que se detienen, se juntan y escurren dejando su rastro | 1 |
 | 1 | Hook | La maqueta oscura, una sola luz amarilla | La pregunta aparece línea por línea como papel que se asienta | 2 |
 | 2 | El pueblo | Maqueta del pueblo costero con lluvia | Estática que se estabiliza en una voz. Entra Janeth de espaldas | 2 |
 | 3 | Concepto | Logo "Vestigia" en Playball y "armando maqueta" abajo. Chips: PC + celular, Misterio | Logo que se arma como pieza de cartón | 1 |

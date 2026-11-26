@@ -42,7 +42,7 @@ export interface Compass {
 export type PhoneScreenId = 'libreta' | 'burbuja';
 
 export type SlideContent =
-  | { kind: 'reposo'; brand: string; message: string }
+  | { kind: 'reposo' }
   | { kind: 'lines'; lines: Line[] }
   | { kind: 'logo'; tagline: string; chips: string[] }
   | { kind: 'loop'; title: string; clues: Beat<Clue>[]; compass: Compass }
@@ -77,8 +77,6 @@ export const SLIDES: Slide[] = [
     kind: 'reposo',
     eyebrow: 'Reposo',
     voice: 'A',
-    brand: 'Vestigia',
-    message: 'Armando la maqueta',
     notes:
       'Pantalla en reposo. Cuando termine el tráiler, → enciende la tormenta y empieza el pitch.',
     steps: [{ p: 0.13 }],

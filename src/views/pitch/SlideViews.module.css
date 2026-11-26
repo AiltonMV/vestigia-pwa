@@ -135,59 +135,17 @@
   text-align: center;
 }
 
-/* Resting screen: the loader's logo, alone in the dark. */
+/* Resting screen: the plain dark behind a window pane. */
 .reposo {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 2.6cqh;
 }
 
-.logo {
-  margin: 0;
-  font: 400 5.6cqw / 1 var(--font-logo);
-  color: var(--color-yellow);
-}
-
-.bar {
-  position: relative;
-  width: 8.4cqw;
-  height: 1px;
-  overflow: hidden;
-  background: rgb(255 252 244 / 0.18);
-}
-
-.bar i {
+.glass {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 35%;
-  background: var(--color-yellow);
-  animation: sweep 1.2s cubic-bezier(0.6, 0, 0.3, 1) infinite;
-}
-
-.barDone i {
+  inset: 0;
   width: 100%;
-  opacity: 0.45;
-  animation: none;
-}
-
-@keyframes sweep {
-  from {
-    translate: -100% 0;
-  }
-  to {
-    translate: 290% 0;
-  }
-}
-
-.message {
-  margin: 0;
-  font: 600 0.8cqw / 1 var(--font-sans);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-mist);
+  height: 100%;
 }
 
 /* Concept and closing: under the title that the 3D scene draws behind the lighthouse. */
@@ -553,9 +511,5 @@
   .hudBeat,
   .hudBeat.shown {
     translate: -50% 0;
-  }
-
-  .bar i {
-    animation: none;
   }
 }
